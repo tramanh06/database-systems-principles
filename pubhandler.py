@@ -2,7 +2,7 @@ __author__ = 'TramAnh'
 
 import xml.sax.handler
 
-NULLChar = "NULL"
+NULLChar = "\N"
 
 class Publication:
     def __init__(self):
@@ -22,6 +22,7 @@ class Publication:
 
 class Article(Publication):
     def __init__(self):
+        Publication.__init__(self)
         self.journal = NULLChar
         self.month = NULLChar
         self.volume = NULLChar
@@ -68,20 +69,36 @@ class Inproceeding(Publication):
 
 
 class PubHandler(xml.sax.handler.ContentHandler):
-    pubid = 0
-    author = []         # List of authors, id will be the index in list
-    authored = []
+
+    # authored = []
 
     def __init__(self):
-        self.articles = []
-        self.books = []
-        self.incollections = []
-        self.inproceedings = []
 
         self.inAuthor, self.inTitle, self.inYear = (0,)*3
         self.inVolume, self.inMonth, self.inJournal, self.inNumber = (0,)*4
         self.inPublisher, self.inIsbn = 0, 0
         self.inBooktitle= 0
+
+        self.pubid = 0
+        self.author = []         # List of authors, id will be the index in list
+
+        a_file = open("article.csv", 'w')
+        self.article_writer = csv.writer(a_file, delimiter=',')
+
+        b_file = open("book.csv", 'w')
+        self.book_writer = csv.writer(b_file, delimiter=',')
+
+        c_file = open("incollection.csv", 'w')
+        self.incollection_writer = csv.writer(c_file, delimiter=',')
+
+        p_file = open("inproceedings.csv", 'w')
+        self.inproceedings_writer = csv.writer(p_file, delimiter=',')
+
+        pu_file = open("publication.csv", 'w')
+        self.publication_writer = csv.writer(pu_file, delimiter=',')
+
+        au_file = open("authored.csv", 'w')
+        self.authored_writer = csv.writer(au_file, delimiter=',')
 
     def startElement(self, name, attrs):
         if name == "title": self.inTitle = 1
@@ -91,7 +108,7 @@ class PubHandler(xml.sax.handler.ContentHandler):
         elif name == "article":
             # Create Article class
             self.pub = Article()
-            self.pub.pubid = PubHandler.pubid
+            self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
         elif name == "volume": self.inVolume = 1
@@ -102,7 +119,7 @@ class PubHandler(xml.sax.handler.ContentHandler):
         elif name == "book":
             # Create Book class
             self.pub = Book()
-            self.pub.pubid = PubHandler.pubid
+            self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
         elif name == "publisher": self.inPublisher = 1
@@ -112,25 +129,27 @@ class PubHandler(xml.sax.handler.ContentHandler):
         elif name== "incollection":
             # Create Incollection class
             self.pub = Incollection()
-            self.pub.pubid = PubHandler.pubid
+            self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
         elif name== "inproceedings":
             # Create Inproceeding class
             self.pub = Inproceeding()
-            self.pub.pubid = PubHandler.pubid
+            self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
     def characters(self, data):
         if self.inAuthor:
-            if data not in PubHandler.author:
+            if data not in self.author:
                 # print "Append "+data+" to author"
-                PubHandler.author.append(data)
-            PubHandler.authored.append((PubHandler.pubid, PubHandler.author.index(data)))
+                self.author.append(data)
+            # PubHandler.authored.append((PubHandler.pubid, PubHandler.author.index(data)))
+            self.authored_writer.writerow((self.pubid, self.author.index(data)))
             # print "append authored=(" + str(PubHandler.pubid)+", "+str(PubHandler.author.index(data))+")"
 
         elif self.inTitle: self.pub.title = data
-        elif self.inYear: self.pub.year = data
+        elif self.inYear:
+            self.pub.year = data
         elif self.inVolume: self.pub.volume = data
         elif self.inJournal: self.pub.journal = data
         elif self.inMonth: self.pub.month = data
@@ -151,91 +170,60 @@ class PubHandler(xml.sax.handler.ContentHandler):
         elif name=="isbn": self.inIsbn = 0
         elif name=="booktitle": self.inBooktitle = 0
         elif name == "article":
-            # self.pub.toString()
-            self.articles.append(self.pub)
-            print "pubid =  "+str(PubHandler.pubid)+" "+name
-            PubHandler.pubid += 1
+            print "pubid = "+str(self.pubid)+" "+name
+            self.article_writer.writerow(self.pub.subclass_list_for_csv())
+
 
         elif name == "book":
-            # self.pub.toString()
-            self.books.append(self.pub)
-            print "pubid =  "+str(PubHandler.pubid)+" "+name
-            PubHandler.pubid += 1
+            print "pubid = "+str(self.pubid)+" "+name
+            self.book_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="incollection":
-            # self.pub.toString()
-            self.incollections.append(self.pub)
-            print "pubid =  "+str(PubHandler.pubid)+" "+name
-            PubHandler.pubid += 1
+            print "pubid = "+str(self.pubid)+" "+name
+            self.incollection_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="inproceedings":
-            # self.pub.toString()
-            self.inproceedings.append(self.pub)
-            print "pubid =  "+str(PubHandler.pubid)+" "+name
-            PubHandler.pubid += 1
+            print "pubid = "+str(self.pubid)+" "+name
+            self.inproceedings_writer.writerow(self.pub.subclass_list_for_csv())
 
-        if(PubHandler.pubid %50000 == 0): print "Processed "+ str(PubHandler.pubid)
+        if name=="article" or name=="book" or name=="incollection" or name=="inproceedings":
+            self.pubid += 1
+            self.publication_writer.writerow(self.pub.pub_list_for_csv())
 
 
-def write_to_csv(filename, type):
-    with open(filename, 'w') as f:
-        writer = csv.writer(f, delimiter=',')
+        if(self.pubid %50000 == 0): print "Processed "+ str(self.pubid)
 
-        if type == "article":
-            publist = handler.articles
-        elif type == "book":
-            publist = handler.books
-
-        elif type == "incollection":
-            publist = handler.incollections
-
-        # elif type == "inproceedings":
-        else:
-            publist = handler.inproceedings
-
-        for each in publist:
-            writer.writerow(each.subclass_list_for_csv())
-
-def write_publication_authored_author_to_csv():
-    # Write author.csv
-    with open("author.csv", 'w') as f:
-        writer = csv.writer(f, delimiter=',')
-        for i in range(0, len(handler.author)):
-            writer.writerow(i, handler.author[i])
-
-    # Write authored.csv
-    with open("authored.csv", 'w') as f:
-        writer = csv.writer(f, delimiter=',')
-        for each in handler.authored:
-            writer.writerow(each)
-
-    # Write publication.csv
-    with open("publication.csv", 'w') as f:
-        writer = csv.writer(f, delimiter=',')
-        for each_pub_type in [handler.articles, handler.books, handler.incollections, handler.inproceedings]:
-            for each_pub in each_pub_type:
-                writer.writerow(each_pub.pub_list_for_csv())
 
 
 import xml.sax
 import csv
 import time
 
+def close_writers():
+    handler.authored_writer.close()
+    handler.publication_writer.close()
+    handler.inproceedings_writer.close()
+    handler.incollection_writer.close()
+    handler.book_writer.close()
+    handler.article_writer.close()
+
 if __name__ == '__main__':
     start = time.time()
     parser = xml.sax.make_parser()
     handler = PubHandler()
     parser.setContentHandler(handler)
-    end_parse = time.time()
     parser.parse('dblp.xml')
+    end_parse = time.time()
 
-    write_to_csv('article.csv', 'article')
-    write_to_csv('book.csv', 'book')
-    write_to_csv('incollection.csv', 'incolletion')
-    write_to_csv('inproceedings.csv', 'inproceedings')
-    write_publication_authored_author_to_csv()
-    end_writecsv = time.time()
 
     print "Time to parse: "+ (end_parse - start)
-    print "Time to write csv: " +  (end_writecsv - end_parse)
+
+    close_writers()
+    print "Writin author.csv..."
+    with open("author.csv", 'w') as f:
+        writer = csv.writer(f, delimiter=',')
+        for i in range(0, len(handler.author)):
+            writer.writerow(i, handler.author[i])
+    print "Time to write author.csv: "+ (time.time() - end_parse)
+
 
