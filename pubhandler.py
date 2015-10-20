@@ -40,7 +40,7 @@ class PubHandler(ContentHandler):
         au_file = open("./Data/authored.csv", 'w')
         self.authored_writer = csv.writer(au_file, delimiter=',')
 
-        author_file = codecs.open("./Data/author.csv", 'w')
+        author_file = open("./Data/author.csv", 'w')
         self.author_writer = csv.writer(author_file, delimiter=',')
 
 
@@ -97,13 +97,8 @@ class PubHandler(ContentHandler):
             self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
-        elif name=="i" or name=="tt" or name=="sub" or name=="sup":
-            self.inHtml = 1
-
-
     def characters(self, data):
         if self.inAuthor: self.author_buffer += data
-
         elif self.inTitle: self.title_buffer += data
         elif self.inYear: self.pub.year = data
         elif self.inVolume: self.pub.volume = data
@@ -123,7 +118,7 @@ class PubHandler(ContentHandler):
                 author_index = self.author.index(self.author_buffer)
 
                 # Write to author.csv
-                self.author_writer.writerow([author_index, self.author_buffer])
+                self.author_writer.writerow([author_index, unicode(self.author_buffer).encode("utf-8")])
             else:
                 author_index = self.author.index(self.author_buffer)
 
@@ -131,8 +126,7 @@ class PubHandler(ContentHandler):
             # Write to authored.csv
             self.authored_writer.writerow((self.pubid, author_index))
         elif name=="title":
-            # self.pub.title = unicode(self.title_buffer).encode("utf-8")
-            self.pub.title = self.title_buffer
+            self.pub.title = unicode(self.title_buffer).encode("utf-8")
             self.title_buffer = ''
             self.inTitle = 0
         elif name=="year": self.inYear = 0
@@ -163,7 +157,6 @@ class PubHandler(ContentHandler):
             self.pubid += 1
             self.publication_writer.writerow(self.pub.pub_list_for_csv())
 
-
         if(self.pubid %50000 == 0): print "Processed "+ str(self.pubid)
 
 
@@ -182,12 +175,8 @@ if __name__ == '__main__':
     parser = xml.sax.make_parser()
     handler = PubHandler()
     parser.setContentHandler(handler)
-
     parser.setEntityResolver(handler)
-    # parser.setEntityResolver(handler)
-    # parser.setDTDHandler(handler)
-    # filestream = codecs.open('dblp.xml','r', encoding="iso-8859-1")
-    # parser.parse(filestream)
+
     parser.parse('dblp.xml')
     end_parse = time.time()
 
