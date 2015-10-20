@@ -138,26 +138,28 @@ class PubHandler(ContentHandler):
         elif name=="isbn": self.inIsbn = 0
         elif name=="booktitle": self.inBooktitle = 0
         elif name == "article":
-            print "pubid = "+str(self.pubid)+" "+name
+            # print "pubid = "+str(self.pubid)+" "+name
             self.article_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name == "book":
-            print "pubid = "+str(self.pubid)+" "+name
+            # print "pubid = "+str(self.pubid)+" "+name
             self.book_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="incollection":
-            print "pubid = "+str(self.pubid)+" "+name
+            # print "pubid = "+str(self.pubid)+" "+name
             self.incollection_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="inproceedings":
-            print "pubid = "+str(self.pubid)+" "+name
+            # print "pubid = "+str(self.pubid)+" "+name
             self.inproceedings_writer.writerow(self.pub.subclass_list_for_csv())
 
         if name=="article" or name=="book" or name=="incollection" or name=="inproceedings":
             self.pubid += 1
             self.publication_writer.writerow(self.pub.pub_list_for_csv())
+            if(self.pubid %100 == 0):
+                print "pubid= "+ str(self.pubid)+" "+name
 
-        if(self.pubid %50000 == 0): print "Processed "+ str(self.pubid)
+
 
 
 def close_writers():
