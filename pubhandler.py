@@ -102,12 +102,9 @@ class PubHandler(ContentHandler):
 
 
     def characters(self, data):
-        if self.inAuthor:
-            self.author_buffer += data
+        if self.inAuthor: self.author_buffer += data
 
-        elif self.inTitle:
-            # self.pub.title = data
-            self.title_buffer += data
+        elif self.inTitle: self.title_buffer += data
         elif self.inYear: self.pub.year = data
         elif self.inVolume: self.pub.volume = data
         elif self.inJournal: self.pub.journal = data
@@ -126,7 +123,7 @@ class PubHandler(ContentHandler):
                 author_index = self.author.index(self.author_buffer)
 
                 # Write to author.csv
-                self.author_writer.writerow([author_index, unicode(self.author_buffer).encode("utf-8")])
+                self.author_writer.writerow([author_index, self.author_buffer])
             else:
                 author_index = self.author.index(self.author_buffer)
 
@@ -134,7 +131,8 @@ class PubHandler(ContentHandler):
             # Write to authored.csv
             self.authored_writer.writerow((self.pubid, author_index))
         elif name=="title":
-            self.pub.title = unicode(self.title_buffer).encode("utf-8")
+            # self.pub.title = unicode(self.title_buffer).encode("utf-8")
+            self.pub.title = self.title_buffer
             self.title_buffer = ''
             self.inTitle = 0
         elif name=="year": self.inYear = 0
