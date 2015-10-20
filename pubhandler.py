@@ -20,7 +20,7 @@ class PubHandler(ContentHandler):
         self.inBooktitle= 0
 
         self.pubid = 0
-        self.author = []         # List of authors, id will be the index in list
+        # self.author = []         # List of authors, id will be the index in list
 
         a_file = open("./Data/article.csv", 'w')
         self.article_writer = csv.writer(a_file, delimiter=',')
@@ -81,9 +81,13 @@ class PubHandler(ContentHandler):
             self.pub.pubid = self.pubid
             self.pub.pubkey = attrs["key"]
 
-        elif name == "publisher": self.inPublisher = 1
+        elif name == "publisher":
+            self.inPublisher = 1
+            self.publisher_buffer = ''
         elif name == "isbn": self.inIsbn = 1
-        elif name == "booktitle": self.inBooktitle = 1
+        elif name == "booktitle":
+            self.inBooktitle = 1
+            self.booktitle_buffer = ''
 
         elif name== "incollection":
             # Create Incollection class
@@ -105,26 +109,27 @@ class PubHandler(ContentHandler):
         elif self.inJournal: self.pub.journal = data
         elif self.inMonth: self.pub.month = data
         elif self.inNumber: self.pub.number = data
-        elif self.inPublisher: self.pub.publisher = data
+        elif self.inPublisher: self.publisher_buffer += data
         elif self.inIsbn: self.pub.isbn = data
-        elif self.inBooktitle: self.pub.booktitle = data
+        elif self.inBooktitle: self.booktitle_buffer += data
 
     def endElement(self, name):
         if name=="author":
             self.inAuthor = 0
             # Check if author is in database
-            if self.author_buffer not in self.author:
-                self.author.append(self.author_buffer)
-                author_index = self.author.index(self.author_buffer)
+            # if self.author_buffer not in self.author:
+            #     self.author.append(self.author_buffer)
+            #     author_index = self.author.index(self.author_buffer)
+            #
+            #     # Write to author.csv
+            #     self.author_writer.writerow([author_index, unicode(self.author_buffer).encode("utf-8")])
+            # else:
+            #     author_index = self.author.index(self.author_buffer)
 
-                # Write to author.csv
-                self.author_writer.writerow([author_index, unicode(self.author_buffer).encode("utf-8")])
-            else:
-                author_index = self.author.index(self.author_buffer)
-
-            self.author_buffer = ''
             # Write to authored.csv
-            self.authored_writer.writerow((self.pubid, author_index))
+            self.authored_writer.writerow((self.pubid, unicode(self.author_buffer).encode("utf-8")))
+            self.author_buffer = ''
+
         elif name=="title":
             self.pub.title = unicode(self.title_buffer).encode("utf-8")
             self.title_buffer = ''
@@ -134,9 +139,17 @@ class PubHandler(ContentHandler):
         elif name=="journal": self.inJournal = 0
         elif name=="month": self.inMonth = 0
         elif name=="number": self.inNumber = 0
-        elif name=="publisher": self.inPublisher = 0
+        elif name=="publisher":
+            self.inPublisher = 0
+            self.pub.publisher = unicode(self.publisher_buffer).encode("utf-8")
+            self.publisher_buffer = ''
+
         elif name=="isbn": self.inIsbn = 0
-        elif name=="booktitle": self.inBooktitle = 0
+        elif name=="booktitle":
+            self.inBooktitle = 0
+            self.pub.booktitle = unicode(self.booktitle_buffer).encode("utf-8")
+            self.booktitle_buffer = ''
+
         elif name == "article":
             # print "pubid = "+str(self.pubid)+" "+name
             self.article_writer.writerow(self.pub.subclass_list_for_csv())
