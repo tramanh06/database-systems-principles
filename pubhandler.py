@@ -29,19 +29,19 @@ class PubHandler(ContentHandler):
         self.book_writer = csv.writer(b_file, delimiter=',')
 
         c_file = open("./Data/incollection.csv", 'w')
-        self.incollection_writer = csv.writer(c_file, delimiter=',')
+        self.incollection_writer = csv.writer(c_file, delimiter=';')
 
         p_file = open("./Data/inproceedings.csv", 'w')
-        self.inproceedings_writer = csv.writer(p_file, delimiter=',')
+        self.inproceedings_writer = csv.writer(p_file, delimiter=';')
 
         pu_file = open("./Data/publication.csv", 'w')
-        self.publication_writer = csv.writer(pu_file, delimiter=',')
+        self.publication_writer = csv.writer(pu_file, delimiter=';')
 
         au_file = open("./Data/authored.csv", 'w')
-        self.authored_writer = csv.writer(au_file, delimiter=',')
+        self.authored_writer = csv.writer(au_file, delimiter=';')
 
         author_file = open("./Data/author.csv", 'w')
-        self.author_writer = csv.writer(author_file, delimiter=',')
+        self.author_writer = csv.writer(author_file, delimiter=';')
 
 
     def resolveEntity(self,publicID,systemID):
@@ -165,7 +165,7 @@ class PubHandler(ContentHandler):
         if name=="article" or name=="book" or name=="incollection" or name=="inproceedings":
             self.pubid += 1
             self.publication_writer.writerow(self.pub.pub_list_for_csv())
-            if(self.pubid %100 == 0):
+            if(self.pubid %100000 == 0):
                 print "pubid= "+ str(self.pubid)+" "+name
 
 
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     end_parse = time.time()
 
     print "Time to parse: "+ str(end_parse - start)
-    logging.info("Finished parsing: "+ handler.pubid +" pub items.")
+    logging.info("Finished parsing: "+ str(handler.pubid) +" pub items.")
     logging.info("Time to parse: "+ str(end_parse - start))
 
 
