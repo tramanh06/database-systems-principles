@@ -13,6 +13,7 @@ class Publication:
         raise NotImplementedError('subclasses must override toString()!')
 
     def pub_list_for_csv(self):
+        # publication.csv pubid;pubkey;title;year
         return [self.pubid, self.pubkey, self.title, self.year]
 
     def subclass_list_for_csv(self):

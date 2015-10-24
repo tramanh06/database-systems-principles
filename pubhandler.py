@@ -7,8 +7,9 @@ import xml.sax
 import csv
 import time
 import logging
-logging.basicConfig(filename='pubhandler.log',level=logging.DEBUG)
 
+logging.basicConfig(filename='pubhandler.log',level=logging.DEBUG)
+delimiter_char = '\t'
 
 class PubHandler(ContentHandler):
 
@@ -20,28 +21,27 @@ class PubHandler(ContentHandler):
         self.inBooktitle= 0
 
         self.pubid = 0
-        # self.author = []         # List of authors, id will be the index in list
 
         a_file = open("./Data/article.csv", 'w')
-        self.article_writer = csv.writer(a_file, delimiter=',')
+        self.article_writer = csv.writer(a_file, delimiter=delimiter_char)
 
         b_file = open("./Data/book.csv", 'w')
-        self.book_writer = csv.writer(b_file, delimiter=',')
+        self.book_writer = csv.writer(b_file, delimiter=delimiter_char)
 
         c_file = open("./Data/incollection.csv", 'w')
-        self.incollection_writer = csv.writer(c_file, delimiter=';')
+        self.incollection_writer = csv.writer(c_file, delimiter=delimiter_char)
 
         p_file = open("./Data/inproceedings.csv", 'w')
-        self.inproceedings_writer = csv.writer(p_file, delimiter=';')
+        self.inproceedings_writer = csv.writer(p_file, delimiter=delimiter_char)
 
         pu_file = open("./Data/publication.csv", 'w')
-        self.publication_writer = csv.writer(pu_file, delimiter=';')
+        self.publication_writer = csv.writer(pu_file, delimiter=delimiter_char)
 
         au_file = open("./Data/authored.csv", 'w')
-        self.authored_writer = csv.writer(au_file, delimiter=';')
+        self.authored_writer = csv.writer(au_file, delimiter=delimiter_char)
 
-        author_file = open("./Data/author.csv", 'w')
-        self.author_writer = csv.writer(author_file, delimiter=';')
+        # author_file = open("./Data/author.csv", 'w')
+        # self.author_writer = csv.writer(author_file, delimiter=delimiter_char)
 
 
     def resolveEntity(self,publicID,systemID):
@@ -108,10 +108,7 @@ class PubHandler(ContentHandler):
         elif self.inTitle: self.buffer += data
         elif self.inYear: self.pub.year = data
         elif self.inVolume: self.pub.volume = data
-        elif self.inJournal:
-            self.buffer += data
-            # if self.pubid == 2727:
-            #     print "watch for pub name"
+        elif self.inJournal: self.buffer += data
         elif self.inMonth: self.pub.month = data
         elif self.inNumber: self.pub.number = data
         elif self.inPublisher: self.buffer += data
@@ -131,6 +128,7 @@ class PubHandler(ContentHandler):
             self.pub.title = unicode(self.buffer).encode("utf-8")
             self.buffer = ''
             self.inTitle = 0
+
         elif name=="year": self.inYear = 0
         elif name=="volume": self.inVolume = 0
         elif name=="journal":
