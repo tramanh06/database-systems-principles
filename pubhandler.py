@@ -6,8 +6,8 @@ import pub_data
 import xml.sax
 import csv
 import time
-import sys
-import codecs
+import logging
+logging.basicConfig(filename='pubhandler.log',level=logging.DEBUG)
 
 
 class PubHandler(ContentHandler):
@@ -58,10 +58,10 @@ class PubHandler(ContentHandler):
     def startElement(self, name, attrs):
         if name == "title":
             self.inTitle = 1
-            self.title_buffer=''
+            self.buffer=''
         elif name == "author":
             self.inAuthor = 1
-            self.author_buffer = ''
+            self.buffer = ''
         elif name == "year": self.inYear = 1
 
         elif name == "article":
@@ -71,7 +71,9 @@ class PubHandler(ContentHandler):
             self.pub.pubkey = attrs["key"]
 
         elif name == "volume": self.inVolume = 1
-        elif name == "journal": self.inJournal = 1
+        elif name == "journal":
+            self.inJournal = 1
+            self.buffer = ''
         elif name == "number": self.inNumber = 1
         elif name == "month": self.inMonth = 1
 
@@ -83,11 +85,11 @@ class PubHandler(ContentHandler):
 
         elif name == "publisher":
             self.inPublisher = 1
-            self.publisher_buffer = ''
+            self.buffer = ''
         elif name == "isbn": self.inIsbn = 1
         elif name == "booktitle":
             self.inBooktitle = 1
-            self.booktitle_buffer = ''
+            self.buffer = ''
 
         elif name== "incollection":
             # Create Incollection class
@@ -102,68 +104,62 @@ class PubHandler(ContentHandler):
             self.pub.pubkey = attrs["key"]
 
     def characters(self, data):
-        if self.inAuthor: self.author_buffer += data
-        elif self.inTitle: self.title_buffer += data
+        if self.inAuthor: self.buffer += data
+        elif self.inTitle: self.buffer += data
         elif self.inYear: self.pub.year = data
         elif self.inVolume: self.pub.volume = data
-        elif self.inJournal: self.pub.journal = data
+        elif self.inJournal:
+            self.buffer += data
+            # if self.pubid == 2727:
+            #     print "watch for pub name"
         elif self.inMonth: self.pub.month = data
         elif self.inNumber: self.pub.number = data
-        elif self.inPublisher: self.publisher_buffer += data
+        elif self.inPublisher: self.buffer += data
         elif self.inIsbn: self.pub.isbn = data
-        elif self.inBooktitle: self.booktitle_buffer += data
+        elif self.inBooktitle: self.buffer += data
+
+
 
     def endElement(self, name):
         if name=="author":
             self.inAuthor = 0
-            # Check if author is in database
-            # if self.author_buffer not in self.author:
-            #     self.author.append(self.author_buffer)
-            #     author_index = self.author.index(self.author_buffer)
-            #
-            #     # Write to author.csv
-            #     self.author_writer.writerow([author_index, unicode(self.author_buffer).encode("utf-8")])
-            # else:
-            #     author_index = self.author.index(self.author_buffer)
-
             # Write to authored.csv
-            self.authored_writer.writerow((self.pubid, unicode(self.author_buffer).encode("utf-8")))
-            self.author_buffer = ''
+            self.authored_writer.writerow((self.pubid, unicode(self.buffer).encode("utf-8")))
+            self.buffer = ''
 
         elif name=="title":
-            self.pub.title = unicode(self.title_buffer).encode("utf-8")
-            self.title_buffer = ''
+            self.pub.title = unicode(self.buffer).encode("utf-8")
+            self.buffer = ''
             self.inTitle = 0
         elif name=="year": self.inYear = 0
         elif name=="volume": self.inVolume = 0
-        elif name=="journal": self.inJournal = 0
+        elif name=="journal":
+            self.pub.journal = unicode(self.buffer).encode("utf-8")
+            self.buffer = ''
+            self.inJournal = 0
         elif name=="month": self.inMonth = 0
         elif name=="number": self.inNumber = 0
         elif name=="publisher":
             self.inPublisher = 0
-            self.pub.publisher = unicode(self.publisher_buffer).encode("utf-8")
-            self.publisher_buffer = ''
+            self.pub.publisher = unicode(self.buffer).encode("utf-8")
+            self.buffer = ''
 
         elif name=="isbn": self.inIsbn = 0
         elif name=="booktitle":
             self.inBooktitle = 0
-            self.pub.booktitle = unicode(self.booktitle_buffer).encode("utf-8")
-            self.booktitle_buffer = ''
+            self.pub.booktitle = unicode(self.buffer).encode("utf-8")
+            self.buffer = ''
 
         elif name == "article":
-            # print "pubid = "+str(self.pubid)+" "+name
             self.article_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name == "book":
-            # print "pubid = "+str(self.pubid)+" "+name
             self.book_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="incollection":
-            # print "pubid = "+str(self.pubid)+" "+name
             self.incollection_writer.writerow(self.pub.subclass_list_for_csv())
 
         elif name=="inproceedings":
-            # print "pubid = "+str(self.pubid)+" "+name
             self.inproceedings_writer.writerow(self.pub.subclass_list_for_csv())
 
         if name=="article" or name=="book" or name=="incollection" or name=="inproceedings":
@@ -172,17 +168,6 @@ class PubHandler(ContentHandler):
             if(self.pubid %100 == 0):
                 print "pubid= "+ str(self.pubid)+" "+name
 
-
-
-
-def close_writers():
-    handler.authored_writer.close()
-    handler.publication_writer.close()
-    handler.inproceedings_writer.close()
-    handler.incollection_writer.close()
-    handler.book_writer.close()
-    handler.article_writer.close()
-    handler.author_writer.close()
 
 if __name__ == '__main__':
     start = time.time()
@@ -196,8 +181,9 @@ if __name__ == '__main__':
     end_parse = time.time()
 
     print "Time to parse: "+ str(end_parse - start)
+    logging.info("Finished parsing: "+ handler.pubid +" pub items.")
+    logging.info("Time to parse: "+ str(end_parse - start))
 
-    close_writers()
 
 
 

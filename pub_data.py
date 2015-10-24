@@ -30,6 +30,7 @@ class Article(Publication):
         print "Article: "+self.title+"|pubkey:"+self.pubkey+"|year:"+self.year+"|journal:"+self.journal+"|month:"+self.month
 
     def subclass_list_for_csv(self):
+        # article.csv is in pubid|journal|month|volume|number
         return [self.pubid, self.journal, self.month, self.volume, self.number]
 
 class Book(Publication):
@@ -41,6 +42,7 @@ class Book(Publication):
         print "Ebook: "+self.title+"|pubkey:"+self.pubkey+"|year:"+self.year+"|publisher:"+self.publisher+"|isbn:"+self.isbn
 
     def subclass_list_for_csv(self):
+        # book.csv is in pubid|publisher|isbn
         return [self.pubid, self.publisher, self.isbn]
 
 class Incollection(Publication):
@@ -53,6 +55,7 @@ class Incollection(Publication):
         print "Incollection: "+self.title+"|pubkey:"+self.pubkey+"|year:"+self.year+"|publisher:"+self.publisher+"|isbn:"+self.isbn
 
     def subclass_list_for_csv(self):
+        # incollection.csv pubid|publisher|isbn|booktitle
         return [self.pubid, self.publisher, self.isbn, self.booktitle]
 
 class Inproceeding(Publication):
@@ -63,4 +66,5 @@ class Inproceeding(Publication):
         print "Inproceedings: "+self.title+"|pubkey:"+self.pubkey+"|year:"+self.year+"|booktitle:"+self.booktitle
 
     def subclass_list_for_csv(self):
+        # inproceedings.csv pubid|booktitle
         return [self.pubid, self.booktitle]
