@@ -1,0 +1,9 @@
+# Data files
+Data/
+*.csv
+*.xml
+*.dtd
+
+# Python specific
+*.pyc
+
