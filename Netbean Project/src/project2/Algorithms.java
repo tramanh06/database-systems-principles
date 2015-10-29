@@ -29,11 +29,12 @@ public class Algorithms {
                 // Merge Sort
                 RelationLoader rLoader=rel.getRelationLoader();	
                 int memorySize = Setting.memorySize;
+                ArrayList<Relation> sublists = new ArrayList<>();
 		while(rLoader.hasNextBlock()){
-                       
 			System.out.println("--->Load at most M blocks into memory...");
 			Block[] blocks=rLoader.loadNextBlocks(memorySize);
                         ArrayList<Tuple> tempTuples = new ArrayList<>();
+                        
 			// Add all tuples to memory
 			for(Block b:blocks){
 				if(b!=null) {
@@ -55,15 +56,10 @@ public class Algorithms {
                             }                            
                         }
                         sublist.getRelationWriter().writeBlock(tempBlock);
-                        System.out.println("FOr debug");
                         
+                        sublists.add(sublist);
 		}
-//                System.out.println("--->Load 1 block into memory...");
-//                Block[] block=rLoader.loadNextBlocks(1);
-//                block[0].print(true);
-//                ArrayList<Tuple> tuples = block[0].tupleLst;
-//                System.out.println("After sorting: ");
-
+                System.out.println("For debug");
                 
 		
 		return numIO;
