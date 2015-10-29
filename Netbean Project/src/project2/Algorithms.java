@@ -30,6 +30,7 @@ public class Algorithms {
                 RelationLoader rLoader=rel.getRelationLoader();	
                 int memorySize = Setting.memorySize;
 		while(rLoader.hasNextBlock()){
+                       
 			System.out.println("--->Load at most M blocks into memory...");
 			Block[] blocks=rLoader.loadNextBlocks(memorySize);
                         ArrayList<Tuple> tempTuples = new ArrayList<>();
@@ -40,7 +41,22 @@ public class Algorithms {
                                     b.print(false);
                                 }
 			}
+                        // Sort tuples in memory 
                         sortTuples(tempTuples);
+                        
+                        // Write to sublist
+                        Relation sublist = new Relation("sublist");
+                        Block tempBlock = new Block();
+                        for(Tuple t: tempTuples){
+                            if (!tempBlock.insertTuple(t)) {
+					sublist.getRelationWriter().writeBlock(tempBlock);
+					tempBlock = new Block();
+					tempBlock.insertTuple(t);
+                            }                            
+                        }
+                        sublist.getRelationWriter().writeBlock(tempBlock);
+                        System.out.println("FOr debug");
+                        
 		}
 //                System.out.println("--->Load 1 block into memory...");
 //                Block[] block=rLoader.loadNextBlocks(1);
