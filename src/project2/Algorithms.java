@@ -113,11 +113,10 @@ public class Algorithms {
 		}
 		result.getRelationWriter().writeBlock(blockOutput);		// write last block
 
+		copyToRel(result, rel);
+		
 		System.out.println("Result Relation: ");
 		result.printRelation(true, true);
-		
-//		rel = result;	Doesn't work
-		
 
 		return numIO;
 	}
@@ -149,6 +148,7 @@ public class Algorithms {
 	}
 
 	private Tuple getSmallestTuple(Block[] blockBuffers, ArrayList<RelationLoader> subLoaders) {
+
 		Tuple temp = null;
 		int minIndex = 0;
 		int i = 0;
@@ -185,6 +185,16 @@ public class Algorithms {
 		return smallestTuple;
 	}
 
+	private void copyToRel(Relation result, Relation rel){
+		RelationLoader resLoader = result.getRelationLoader();
+		RelationLoader relLoader = rel.getRelationLoader();
+		
+		int numBlocks = rel.getNumBlocks();
+		
+		while(resLoader.hasNextBlock()){
+			relLoader.loadNextBlocks(1)[0].tupleLst = resLoader.loadNextBlocks(1)[0].tupleLst;
+		}
+	}
 	/**
 	 * Join relations relR and relS using Setting.memorySize buffers of memory
 	 * to produce the result relation relRS
@@ -297,7 +307,7 @@ public class Algorithms {
 
 		/* MergeSortRelation */
 		int MSCost = algo.mergeSortRelation(relR);
-		System.out.println("FOr debug");
+		relR.printRelation(true, true);
 		// Insert your test cases here!
 
 	}
