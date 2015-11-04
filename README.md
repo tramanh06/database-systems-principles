@@ -1,8 +1,5 @@
-CZ4031 Database System Principles project
+Database Systems project
 ===============
-
-Git repo for the project using Python and MySQL 
----------------
 
 - XML Parser with SAX
 - SQL Queries
