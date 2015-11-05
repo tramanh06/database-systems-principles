@@ -176,9 +176,9 @@ public class Algorithms {
 
 	private Tuple getSmallestTuple(Block[] blockBuffers, ArrayList<RelationLoader> subLoaders) {
 
-		int minIndex = getMinIndex(blockBuffers);
-
+		int minIndex = getMinBlockIndex(blockBuffers);
 		Tuple smallestTuple = blockBuffers[minIndex].tupleLst.remove(0);
+		
 		// check if block is empty. If yes, load next block
 		if (blockBuffers[minIndex].getNumTuples() == 0) {
 			System.out.println("Block is empty");
@@ -191,7 +191,7 @@ public class Algorithms {
 		return smallestTuple;
 	}
 	
-	private int getMinIndex(Block[] blockBuffers){
+	private int getMinBlockIndex(Block[] blockBuffers){
 		Tuple temp = null;
 		int minIndex = 0;
 		int i = 0;
