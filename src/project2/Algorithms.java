@@ -49,7 +49,7 @@ public class Algorithms {
 		Relation result = new Relation(relName);
 		Block[] blockBuffers = new Block[Setting.memorySize-1];	/* Simulate block buffers in memory */
 		Block blockOutput = new Block();	/* Simulate single block output in memory */
-		boolean hasTuple = true;	/* Condition to stop while loop below */
+		boolean hasTuple = true;	/* Condition to stop while loop below, assume all relations are valid */
 		
 		/* Load first block of each sublist to blockBuffers */
 		ArrayList<RelationLoader> subLoaders = new ArrayList<>();
@@ -101,10 +101,11 @@ public class Algorithms {
 			Block[] blocks = rLoader.loadNextBlocks(Setting.memorySize);
 
 			/* Statistics: cost to read from disk
-			 * Assume: every read will read M blocks from disk, even the last block
-			 * TODO: confirm with prof with assumption
+			 * Assume: every read will read M blocks from disk, even the last block.
+			 * Update: wrong! must count number of non-null elements in array
+			 * TODO: fix this
 			 */
-			numIO += Setting.memorySize;
+			numIO += blocks.length;
 
 			ArrayList<Tuple> tempTuples = new ArrayList<>();
 
@@ -146,6 +147,7 @@ public class Algorithms {
 		}
 		return numIO;
 	}
+	
 	private ArrayList<Tuple> sortTuples(ArrayList<Tuple> tuples) {
 		Collections.sort(tuples, (Tuple one, Tuple other) -> one.key - other.key);
 		// To test
@@ -174,11 +176,26 @@ public class Algorithms {
 
 	private Tuple getSmallestTuple(Block[] blockBuffers, ArrayList<RelationLoader> subLoaders) {
 
+		int minIndex = getMinIndex(blockBuffers);
+
+		Tuple smallestTuple = blockBuffers[minIndex].tupleLst.remove(0);
+		// check if block is empty. If yes, load next block
+		if (blockBuffers[minIndex].getNumTuples() == 0) {
+			System.out.println("Block is empty");
+			if(subLoaders.get(minIndex).hasNextBlock()){
+				Block nextblock = subLoaders.get(minIndex).loadNextBlocks(1)[0];
+				blockBuffers[minIndex] = nextblock;
+			}
+		}
+
+		return smallestTuple;
+	}
+	
+	private int getMinIndex(Block[] blockBuffers){
 		Tuple temp = null;
 		int minIndex = 0;
 		int i = 0;
 		int flag = -1;
-		
 		for (Block block : blockBuffers) {
 			if(block!=null && block.getNumTuples() != 0){
 				if(flag == -1){
@@ -195,18 +212,7 @@ public class Algorithms {
 			}
 			i++;
 		}
-
-		Tuple smallestTuple = blockBuffers[minIndex].tupleLst.remove(0);
-		// check if block is empty. If yes, load next block
-		if (blockBuffers[minIndex].getNumTuples() == 0) {
-			System.out.println("Block is empty");
-			if(subLoaders.get(minIndex).hasNextBlock()){
-				Block nextblock = subLoaders.get(minIndex).loadNextBlocks(1)[0];
-				blockBuffers[minIndex] = nextblock;
-			}
-		}
-
-		return smallestTuple;
+		return minIndex;
 	}
 
 	private void copyToRel(Relation result, Relation rel){
@@ -259,7 +265,7 @@ public class Algorithms {
 			return -1;
 		}
 			
-		/* Creating sublists for R and S */
+		/* Phase 1: Creating sorted sublists for R and S */
 		ArrayList<Relation> Rsublists = new ArrayList<>();
 		numIO += createSublists(relR.getRelationLoader(), Rsublists);
 		
@@ -267,9 +273,29 @@ public class Algorithms {
 		numIO += createSublists(relS.getRelationLoader(), Ssublists);
 		
 		/* Load first block of each sublist to blockBuffers */
-		ArrayList<Block> blockBuffers = new ArrayList<>();
+		Block[] RblockBuffers = new Block[Rsublists.size()];	/* Simulate block buffers in memory */
+		Block[] SblockBuffers = new Block[Ssublists.size()];
+		Block blockOutput = new Block();	/* Simulate single block output in memory */
+		boolean hasTuple = false;	/* Condition to stop while loop below */
 		
+		ArrayList<RelationLoader> RsubLoaders = new ArrayList<>();
+		ArrayList<RelationLoader> SsubLoaders = new ArrayList<>();
+		numIO += loadFirstBlocksToMem(Rsublists, RblockBuffers, RsubLoaders);
+		numIO += loadFirstBlocksToMem(Ssublists, SblockBuffers, SsubLoaders);
 		
+		/* Get smallest tuple from each sublist*/
+		Tuple Rsmallest = getSmallestTuple(RblockBuffers, RsubLoaders);
+		Tuple Ssmallest = getSmallestTuple(SblockBuffers, SsubLoaders);
+		
+		if(Rsmallest.key == Ssmallest.key){
+			System.out.println(String.format("Join: %s (%s, %s)", Rsmallest.key, Rsmallest.value, Ssmallest.value));
+		}
+		else if (Rsmallest.key < Ssmallest.key){
+			/* Remove Rsmallest */
+		}
+		else if (Ssmallest.key < Rsmallest.key){
+			/* Remove Ssmallest */
+		}
 		
 
 		return numIO;
