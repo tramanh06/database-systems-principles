@@ -28,96 +28,115 @@ public class Algorithms {
 		int numIO = 0;
 		String relName = rel.name;
 
-		// Condition check
-		if (rel.getNumBlocks() / Setting.memorySize >= (Setting.memorySize - 1)) {
+		/* Condition check */
+		if ( rel.getNumBlocks() / Setting.memorySize >= (Setting.memorySize - 1)) {
 			System.out.println("Error! Assumption 2 is not satisfied.");
-			return 0;
+			return -1;
 		}
 
-		// Phase 1: Generating sublists to disk
+		/* 
+		 * Phase 1: Generating sublists to disk 
+		 */
 		RelationLoader rLoader = rel.getRelationLoader();
-		int memorySize = Setting.memorySize;
 		ArrayList<Relation> sublists = new ArrayList<>();
-
-		while (rLoader.hasNextBlock()) {
-			System.out.println("--->Load at most M blocks into memory...");
-			Block[] blocks = rLoader.loadNextBlocks(memorySize);
-
-			// Statistics: cost to read from disk
-			// Assume: every read will read M blocks from disk
-			// TODO: confirm with prof with assumption
-			numIO += memorySize;
-
-			ArrayList<Tuple> tempTuples = new ArrayList<>();
-
-			// Add all tuples to memory
-			for (Block b : blocks) {
-				if (b != null) {
-					tempTuples.addAll(b.tupleLst);
-					b.print(false);
-				}
-			}
-			// Sort tuples in memory
-			sortTuples(tempTuples);
-
-			// Write to sublist
-			Relation sublist = writeTuplesToRelation("sublist", tempTuples);
-			sublists.add(sublist);
-
-			// Statistics: cost to write sublist to disk
-			numIO += sublist.getNumBlocks();
-		}
+		numIO += createSublists(rLoader, sublists);
+		
 		System.out.println("Number of sublists written to disk: " + sublists.size());
 
-		////// Phase 2: Merge sort
-		
+		/* 
+		 * Phase 2: Merge sort
+		 */
 		Relation result = new Relation(relName);
-//		ArrayList<Block> blockBuffers = new ArrayList<>();
-		Block[] blockBuffers = new Block[Setting.memorySize-1];
-		Block blockOutput = new Block();
-		boolean hasTuple = false;
+		Block[] blockBuffers = new Block[Setting.memorySize-1];	/* Simulate block buffers in memory */
+		Block blockOutput = new Block();	/* Simulate single block output in memory */
+		boolean hasTuple = false;	/* Condition to stop while loop below */
 		
-		// Load first block of each sublist to blockBuffers
+		/* Load first block of each sublist to blockBuffers */
 		int i=0;
 		ArrayList<RelationLoader> subLoaders = new ArrayList<>();
 		RelationLoader tempLoader;
+		
 		for (Relation sublist : sublists) {
 			tempLoader = sublist.getRelationLoader();
 			if (tempLoader.hasNextBlock()) {
-//				blockBuffers.add(sublist.getRelationLoader().loadNextBlocks(1)[0]);
 				blockBuffers[i] = tempLoader.loadNextBlocks(1)[0];
 				hasTuple = true;
 			}
 			subLoaders.add(tempLoader);
+			numIO += sublist.getNumBlocks();	/* Cost of eventual loading blocks of each sublist */
 			i++;
 		}
+		/* Merge sublists */
 		while (hasTuple) {
 			Tuple smallestTuple = getSmallestTuple(blockBuffers, subLoaders);
-			
-			//print tuple
-//			System.out.println(smallestTuple.toString());
-			// Print to console + modify Relation rel
+			/* Insert smallestTuple to blockOutput */
 			if (!blockOutput.insertTuple(smallestTuple)) {
-//				System.out.println("Finish a block");
+				System.out.println("Writing 1 block to disk");
 				result.getRelationWriter().writeBlock(blockOutput);		// write to Relation result
 				numIO++; // IO Cost to write to disk
 				blockOutput = new Block();
 				blockOutput.insertTuple(smallestTuple);
 			}
 			
+			/* Check if there is any tuple left */
 			hasTuple = false;
 			for (Relation sublist: sublists){
-				if(sublist.getNumTuples()!=0)
+				if(sublist.getNumTuples()!=0){
 					hasTuple = true;
+					break;
+				}
 			}
 		}
-		result.getRelationWriter().writeBlock(blockOutput);		// write last block
-
+		result.getRelationWriter().writeBlock(blockOutput);		/* write last block */
+		numIO++;
+		
+		/* Copy tuplelst from result to original rel */
 		copyToRel(result, rel);
 		
-		System.out.println("Result Relation: ");
-		result.printRelation(true, true);
+		return numIO;
+	}
+	/**
+	 * Create sublists according to block size of memory and block factor
+	 * @param rLoader
+	 * 				RelationLoader of the relation that's to be used to create sublists
+	 * @param sublists
+	 * 				Resulted sublists 
+	 * @return
+	 * 				
+	 */
+	private int createSublists(RelationLoader rLoader, ArrayList<Relation> sublists){
+		int numIO = 0;
+		while (rLoader.hasNextBlock()) {
+			System.out.println("--->Load at most M blocks into memory...");
+			Block[] blocks = rLoader.loadNextBlocks(Setting.memorySize);
 
+			/* Statistics: cost to read from disk
+			 * Assume: every read will read M blocks from disk, even the last block
+			 * TODO: confirm with prof with assumption
+			 */
+			numIO += Setting.memorySize;
+
+			ArrayList<Tuple> tempTuples = new ArrayList<>();
+
+			/* Add all tuples to memory */
+			for (Block b : blocks) {
+				if (b != null) {
+					tempTuples.addAll(b.tupleLst);
+					b.print(false);
+				}
+			}
+			/* Sort tuples in memory */
+			sortTuples(tempTuples);
+
+			/* Write to sublist */
+			Relation sublist = writeTuplesToRelation("sublist", tempTuples);
+			sublists.add(sublist);
+
+			/* Statistics: 
+			 * cost to write sublist to disk
+			 */
+			numIO += sublist.getNumBlocks();
+		}
 		return numIO;
 	}
 
@@ -137,7 +156,7 @@ public class Algorithms {
 		for (Tuple t : tuples) {
 			if (!tempBlock.insertTuple(t)) {
 				rel.getRelationWriter().writeBlock(tempBlock);
-				// numIO++; // IO Cost to write
+//				numIO++; // IO Cost to write
 				tempBlock = new Block();
 				tempBlock.insertTuple(t);
 			}
@@ -152,17 +171,16 @@ public class Algorithms {
 		Tuple temp = null;
 		int minIndex = 0;
 		int i = 0;
-		
-		for (Block block: blockBuffers){
-			if(block!=null && block.getNumTuples() != 0){
-				temp = block.tupleLst.get(0);
-				break;
-			}
-//			return null;
-		}
+		int flag = -1;
 		
 		for (Block block : blockBuffers) {
 			if(block!=null && block.getNumTuples() != 0){
+				if(flag == -1){
+					temp = block.tupleLst.get(0);
+					minIndex = i;
+					flag = 0;
+				}
+					
 				Tuple firstTuple = block.tupleLst.get(0);
 				if(firstTuple.key < temp.key) {
 					temp = firstTuple;
@@ -175,7 +193,7 @@ public class Algorithms {
 		Tuple smallestTuple = blockBuffers[minIndex].tupleLst.remove(0);
 		// check if block is empty. If yes, load next block
 		if (blockBuffers[minIndex].getNumTuples() == 0) {
-//			System.out.println("Block is empty");
+			System.out.println("Block is empty");
 			if(subLoaders.get(minIndex).hasNextBlock()){
 				Block nextblock = subLoaders.get(minIndex).loadNextBlocks(1)[0];
 				blockBuffers[minIndex] = nextblock;
@@ -188,8 +206,6 @@ public class Algorithms {
 	private void copyToRel(Relation result, Relation rel){
 		RelationLoader resLoader = result.getRelationLoader();
 		RelationLoader relLoader = rel.getRelationLoader();
-		
-		int numBlocks = rel.getNumBlocks();
 		
 		while(resLoader.hasNextBlock()){
 			relLoader.loadNextBlocks(1)[0].tupleLst = resLoader.loadNextBlocks(1)[0].tupleLst;
@@ -210,7 +226,7 @@ public class Algorithms {
 	public int hashJoinRelations(Relation relR, Relation relS, Relation relRS) {
 		int numIO = 0;
 
-		// Insert your code here!
+		
 
 		return numIO;
 	}
@@ -231,7 +247,24 @@ public class Algorithms {
 	public int refinedSortMergeJoinRelations(Relation relR, Relation relS, Relation relRS) {
 		int numIO = 0;
 
-		// Insert your code here!
+		/* Condition checking */
+		if (relR.getNumBlocks()/Setting.memorySize + relS.getNumBlocks()/Setting.memorySize > Setting.memorySize-1){
+			System.out.println("Condition for Refined SortMerge Join is not met. Program is exiting..");
+			return -1;
+		}
+			
+		/* Creating sublists for R and S */
+		ArrayList<Relation> Rsublists = new ArrayList<>();
+		numIO += createSublists(relR.getRelationLoader(), Rsublists);
+		
+		ArrayList<Relation> Ssublists = new ArrayList<>();
+		numIO += createSublists(relS.getRelationLoader(), Ssublists);
+		
+		/* Load first block of each sublist to blockBuffers */
+		ArrayList<Block> blockBuffers = new ArrayList<>();
+		
+		
+		
 
 		return numIO;
 	}
@@ -304,11 +337,25 @@ public class Algorithms {
 		Relation relR = new Relation("RelR");
 		int numTuples = relR.populateRelationFromFile("RelR.txt");
 		System.out.println("Relation RelR contains " + numTuples + " tuples.");
+		Relation relS = new Relation("RelS");
+		numTuples = relS.populateRelationFromFile("RelS.txt");
+		System.out.println("Relation RelS contains " + numTuples + " tuples.");
+		System.out.println("---------Finish populating relations----------\n\n");
 
 		/* MergeSortRelation */
-		int MSCost = algo.mergeSortRelation(relR);
-		relR.printRelation(true, true);
-		// Insert your test cases here!
+		System.out.println("-----Test Merge Sort Algorithm------");
+		int MSCost = algo.mergeSortRelation(relS);
+		relS.printRelation(true, true);
+		System.out.println("NumIO = "+MSCost);
+		
+		/* Refined Sort-Merge */
+//		Relation relRS = new Relation("RelRS");
+//		System.out.println("Num tuples in R: "+relR.getNumTuples());
+//		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
+//		System.out.println("Num tuples in R: "+relR.getNumTuples());
+		
+		
+		
 
 	}
 
