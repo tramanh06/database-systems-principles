@@ -49,23 +49,12 @@ public class Algorithms {
 		Relation result = new Relation(relName);
 		Block[] blockBuffers = new Block[Setting.memorySize-1];	/* Simulate block buffers in memory */
 		Block blockOutput = new Block();	/* Simulate single block output in memory */
-		boolean hasTuple = false;	/* Condition to stop while loop below */
+		boolean hasTuple = true;	/* Condition to stop while loop below */
 		
 		/* Load first block of each sublist to blockBuffers */
-		int i=0;
 		ArrayList<RelationLoader> subLoaders = new ArrayList<>();
-		RelationLoader tempLoader;
+		numIO += loadFirstBlocksToMem(sublists, blockBuffers, subLoaders);
 		
-		for (Relation sublist : sublists) {
-			tempLoader = sublist.getRelationLoader();
-			if (tempLoader.hasNextBlock()) {
-				blockBuffers[i] = tempLoader.loadNextBlocks(1)[0];
-				hasTuple = true;
-			}
-			subLoaders.add(tempLoader);
-			numIO += sublist.getNumBlocks();	/* Cost of eventual loading blocks of each sublist */
-			i++;
-		}
 		/* Merge sublists */
 		while (hasTuple) {
 			Tuple smallestTuple = getSmallestTuple(blockBuffers, subLoaders);
@@ -95,6 +84,7 @@ public class Algorithms {
 		
 		return numIO;
 	}
+	
 	/**
 	 * Create sublists according to block size of memory and block factor
 	 * @param rLoader
@@ -140,6 +130,22 @@ public class Algorithms {
 		return numIO;
 	}
 
+	private int loadFirstBlocksToMem(ArrayList<Relation> sublists, Block[] blockBuffers, ArrayList<RelationLoader> subLoaders){
+		int i=0;
+		int numIO = 0;
+		RelationLoader tempLoader;
+		
+		for (Relation sublist : sublists) {
+			tempLoader = sublist.getRelationLoader();
+			if (tempLoader.hasNextBlock()) {
+				blockBuffers[i] = tempLoader.loadNextBlocks(1)[0];
+			}
+			subLoaders.add(tempLoader);
+			numIO += sublist.getNumBlocks();	/* Cost of eventual loading blocks of each sublist */
+			i++;
+		}
+		return numIO;
+	}
 	private ArrayList<Tuple> sortTuples(ArrayList<Tuple> tuples) {
 		Collections.sort(tuples, (Tuple one, Tuple other) -> one.key - other.key);
 		// To test
