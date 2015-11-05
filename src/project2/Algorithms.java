@@ -284,11 +284,16 @@ public class Algorithms {
 		numIO += loadFirstBlocksToMem(Ssublists, SblockBuffers, SsubLoaders);
 		
 		/* Get smallest tuple from each sublist*/
-		Tuple Rsmallest = getSmallestTuple(RblockBuffers, RsubLoaders);
-		Tuple Ssmallest = getSmallestTuple(SblockBuffers, SsubLoaders);
+		Tuple Rsmallest = RblockBuffers[getMinBlockIndex(RblockBuffers)].tupleLst.get(0);
+		Tuple Ssmallest = SblockBuffers[getMinBlockIndex(SblockBuffers)].tupleLst.get(0);
 		
 		if(Rsmallest.key == Ssmallest.key){
 			System.out.println(String.format("Join: %s (%s, %s)", Rsmallest.key, Rsmallest.value, Ssmallest.value));
+			
+			// for each Rsmallest, join with all items in S
+			// Assumption: will only merge for tuples in memory, 
+			// if >20 tuples in S has the same value as R, this will not work
+			
 		}
 		else if (Rsmallest.key < Ssmallest.key){
 			/* Remove Rsmallest */
@@ -300,6 +305,10 @@ public class Algorithms {
 
 		return numIO;
 	}
+	
+//	private int mergeRtoS(Relation relRS, Tuple Rsmallest ){
+//		
+//	}
 
 	/**
 	 * Example usage of classes.
