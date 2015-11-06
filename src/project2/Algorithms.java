@@ -60,7 +60,6 @@ public class Algorithms {
 			Tuple smallestTuple = getSmallestTuple(blockBuffers, subLoaders);
 			/* Insert smallestTuple to blockOutput */
 			if (!blockOutput.insertTuple(smallestTuple)) {
-				System.out.println("Writing 1 block to disk");
 				result.getRelationWriter().writeBlock(blockOutput);		// write to Relation result
 				numIO++; // IO Cost to write to disk
 				blockOutput = new Block();
@@ -97,7 +96,6 @@ public class Algorithms {
 	private int createSublists(RelationLoader rLoader, ArrayList<Relation> sublists){
 		int numIO = 0;
 		while (rLoader.hasNextBlock()) {
-			System.out.println("--->Load at most M blocks into memory...");
 			Block[] blocks = rLoader.loadNextBlocks(Setting.memorySize);
 
 			/* Statistics: cost to read from disk
@@ -120,13 +118,14 @@ public class Algorithms {
 			sortTuples(tempTuples);
 
 			/* Write to sublist */
-			Relation sublist = writeTuplesToRelation("sublist", tempTuples);
+			Relation sublist = new Relation("sublist"); 
+			numIO += writeTuplesToRelation(sublist, tempTuples);
 			sublists.add(sublist);
 
 			/* Statistics: 
 			 * cost to write sublist to disk
 			 */
-			numIO += sublist.getNumBlocks();
+//			numIO += sublist.getNumBlocks();
 		}
 		return numIO;
 	}
@@ -158,20 +157,20 @@ public class Algorithms {
 		return tuples;
 	}
 
-	private Relation writeTuplesToRelation(String relName, ArrayList<Tuple> tuples) {
-		Relation rel = new Relation(relName);
+	private int writeTuplesToRelation(Relation rel, ArrayList<Tuple> tuples) {
+		int numIO=0;
 		Block tempBlock = new Block();
 		for (Tuple t : tuples) {
 			if (!tempBlock.insertTuple(t)) {
 				rel.getRelationWriter().writeBlock(tempBlock);
-//				numIO++; // IO Cost to write
+				numIO++; // IO Cost to write
 				tempBlock = new Block();
 				tempBlock.insertTuple(t);
 			}
 		}
 		rel.getRelationWriter().writeBlock(tempBlock);
-
-		return rel;
+		numIO++;
+		return numIO;
 	}
 
 	private Tuple getSmallestTuple(Block[] blockBuffers, ArrayList<RelationLoader> subLoaders) {
@@ -181,7 +180,6 @@ public class Algorithms {
 		
 		// check if block is empty. If yes, load next block
 		if (blockBuffers[minIndex].getNumTuples() == 0) {
-			System.out.println("Block is empty");
 			if(subLoaders.get(minIndex).hasNextBlock()){
 				Block nextblock = subLoaders.get(minIndex).loadNextBlocks(1)[0];
 				blockBuffers[minIndex] = nextblock;
@@ -252,9 +250,12 @@ public class Algorithms {
 		numIO += hashByBlock(SLoader, SSublists);
 		
 		/* Phase 2: Compare each sublist from R to each from S*/
+		ArrayList<Tuple> results = new ArrayList<>();
 		for(int i=0; i<Setting.memorySize-1; i++){
-			numIO += join2sublists(RSublists[i].getRelationLoader(), SSublists[i].getRelationLoader(), relRS.getRelationWriter());
+			join2sublists(RSublists[i].getRelationLoader(), SSublists[i].getRelationLoader(), results);
 		}
+		
+		writeTuplesToRelation(relRS, results);
 
 		return numIO;
 	}
@@ -303,13 +304,10 @@ public class Algorithms {
 		return numIO;
 	}
 
-	private int join2sublists(RelationLoader RLoader, RelationLoader SLoader, RelationWriter relRS){
-		int numIO = 0;
-		
+	private void join2sublists(RelationLoader RLoader, RelationLoader SLoader, ArrayList<Tuple> results){
 		/* Load R into M-1 buffers. Assume R's size is smaller */
 		Block[] leftBuffers = new Block[Setting.memorySize-1];
 		Block rightBuffer;
-		Block tempOutput = new Block();
 		while(RLoader.hasNextBlock()){
 			leftBuffers = RLoader.loadNextBlocks(Setting.memorySize-1);
 			SLoader.reset();
@@ -321,13 +319,8 @@ public class Algorithms {
 						for(Tuple lTuple: lBlock.tupleLst){
 							for(Tuple rTuple: rightBuffer.tupleLst){
 								if(lTuple.key == rTuple.key){
-									Tuple temp = new Tuple(lTuple.key, String.format("(%s, %s", lTuple.value, rTuple.value));
-									if(!tempOutput.insertTuple(temp)){
-										relRS.writeBlock(tempOutput);
-										numIO++;
-										tempOutput = new Block();
-										tempOutput.insertTuple(temp);
-									}
+									Tuple temp = new Tuple(lTuple.key, String.format("(%s, %s)", lTuple.value, rTuple.value));
+									results.add(temp);
 								}
 							}
 						}
@@ -335,11 +328,6 @@ public class Algorithms {
 				}
 			}
 		}
-		relRS.writeBlock(tempOutput);
-		numIO++;
-		
-		
-		return numIO;
 	}
 	
 	/**
