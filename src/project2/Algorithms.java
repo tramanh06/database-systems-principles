@@ -121,11 +121,6 @@ public class Algorithms {
 			Relation sublist = new Relation("sublist"); 
 			numIO += writeTuplesToRelation(sublist, tempTuples);
 			sublists.add(sublist);
-
-			/* Statistics: 
-			 * cost to write sublist to disk
-			 */
-//			numIO += sublist.getNumBlocks();
 		}
 		return numIO;
 	}
