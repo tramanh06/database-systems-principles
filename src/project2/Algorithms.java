@@ -238,8 +238,65 @@ public class Algorithms {
 	public int hashJoinRelations(Relation relR, Relation relS, Relation relRS) {
 		int numIO = 0;
 
+		/* Phase 1: Hash to M-1 buckets */
+		RelationLoader RLoader = relR.getRelationLoader();
+		RelationLoader SLoader = relS.getRelationLoader();
 		
+		Relation[] RSublists = new Relation[Setting.memorySize-1];
+		Relation[] SSublists = new Relation[Setting.memorySize-1];
+		/* Initialize sublists*/
+		initializeSublists(RSublists, "RSublist");
+		initializeSublists(SSublists, "SSublist");
+		/* Hash each relation */
+		numIO += hashByBlock(RLoader, RSublists);
+		numIO += hashByBlock(SLoader, SSublists);
+		
+		/* Phase 2: */
 
+		return numIO;
+	}
+	
+	private void initializeSublists(Relation[] sublists, String sublistName){
+		for(int i=0; i<Setting.memorySize-1; i++){
+			sublists[i] = new Relation(sublistName);
+		}
+	}
+	
+	private int hashByBlock(RelationLoader rLoader, Relation[] hashedSublists){
+		int numIO = 0;
+		int hashValue;
+		
+		Block[] hashMem = new Block[Setting.memorySize-1];
+		for(int i=0; i<Setting.memorySize-1; i++){
+			hashMem[i] = new Block();
+		}
+		
+		while(rLoader.hasNextBlock()){
+			Block inBuffer = rLoader.loadNextBlocks(1)[0];
+			for(Tuple each: inBuffer.tupleLst){
+				hashValue = each.key%(Setting.memorySize-1);
+				if(!hashMem[hashValue].insertTuple(each)){
+					hashedSublists[hashValue].getRelationWriter().writeBlock(hashMem[hashValue]);
+					numIO++; // IO Cost to write
+					hashMem[hashValue] = new Block();
+					hashMem[hashValue].insertTuple(each);
+				}
+			}
+		}
+		
+		/* Write to disk last block from memory */
+		for(int i=0; i<Setting.memorySize-1; i++){
+			if(hashMem[i] != null){
+				hashedSublists[i].getRelationWriter().writeBlock(hashMem[i]);
+				numIO++;
+			}
+		}
+		
+		// Test
+//		for(Relation each: hashedSublists){
+//			each.printRelation(true, true);
+//		}
+		
 		return numIO;
 	}
 
@@ -384,10 +441,10 @@ public class Algorithms {
 		System.out.println("---------Finish populating relations----------\n\n");
 
 		/* MergeSortRelation */
-		System.out.println("-----Test Merge Sort Algorithm------");
-		int MSCost = algo.mergeSortRelation(relS);
-		relS.printRelation(true, true);
-		System.out.println("NumIO = "+MSCost);
+//		System.out.println("-----Test Merge Sort Algorithm------");
+//		int MSCost = algo.mergeSortRelation(relS);
+//		relS.printRelation(true, true);
+//		System.out.println("NumIO = "+MSCost);
 		
 		/* Refined Sort-Merge */
 //		Relation relRS = new Relation("RelRS");
@@ -395,6 +452,11 @@ public class Algorithms {
 //		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
 //		System.out.println("Num tuples in R: "+relR.getNumTuples());
 		
+		/* HashJoinRelation */
+		Relation relRS = new Relation("RelRS");
+		System.out.println("Num tuples in R: "+relR.getNumTuples());
+		int IOCost = algo.hashJoinRelations(relR, relS, relRS);
+		System.out.println("NumIO: "+IOCost);
 		
 		
 
