@@ -230,16 +230,10 @@ public class Algorithms {
 	 */
 	public int hashJoinRelations(Relation relR, Relation relS, Relation relRS) {
 		int numIO = 0;
-<<<<<<< HEAD
-		
-		/* Phase 1: Hash to M-1 bucket */
-		
-=======
 
 		/* Phase 1: Hash to M-1 buckets */
 		RelationLoader RLoader = relR.getRelationLoader();
 		RelationLoader SLoader = relS.getRelationLoader();
->>>>>>> hashjoin
 		
 		Relation[] RSublists = new Relation[Setting.memorySize-1];
 		Relation[] SSublists = new Relation[Setting.memorySize-1];
