@@ -495,6 +495,7 @@ public class Algorithms {
 //		System.out.println("Num tuples in R: "+relR.getNumTuples());
 		
 		/* HashJoinRelation */
+		System.out.println("-----Test HashJoin Algorithm------");
 		Relation relRS = new Relation("RelRS");
 		System.out.println("Num tuples in R: "+relR.getNumTuples());
 		int IOCost = algo.hashJoinRelations(relR, relS, relRS);
@@ -502,7 +503,10 @@ public class Algorithms {
 		relRS.printRelation(true, true);
 		System.out.println("Num Tuples="+relRS.getNumTuples());
 		
-
+		System.out.println("------Relation after sort-------");
+		algo.mergeSortRelation(relRS);
+		relRS.printRelation(true, true);
+		System.out.println("Num Tuples="+relRS.getNumTuples());
 	}
 
 	/**
