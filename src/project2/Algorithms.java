@@ -237,7 +237,9 @@ public class Algorithms {
 	 */
 	public int hashJoinRelations(Relation relR, Relation relS, Relation relRS) {
 		int numIO = 0;
-
+		
+		/* Phase 1: Hash to M-1 bucket */
+		
 		
 
 		return numIO;
