@@ -251,7 +251,10 @@ public class Algorithms {
 		numIO += hashByBlock(RLoader, RSublists);
 		numIO += hashByBlock(SLoader, SSublists);
 		
-		/* Phase 2: */
+		/* Phase 2: Compare each sublist from R to each from S*/
+		for(int i=0; i<Setting.memorySize-1; i++){
+			numIO += join2sublists(RSublists[i].getRelationLoader(), SSublists[i].getRelationLoader(), relRS.getRelationWriter());
+		}
 
 		return numIO;
 	}
@@ -300,6 +303,45 @@ public class Algorithms {
 		return numIO;
 	}
 
+	private int join2sublists(RelationLoader RLoader, RelationLoader SLoader, RelationWriter relRS){
+		int numIO = 0;
+		
+		/* Load R into M-1 buffers. Assume R's size is smaller */
+		Block[] leftBuffers = new Block[Setting.memorySize-1];
+		Block rightBuffer;
+		Block tempOutput = new Block();
+		while(RLoader.hasNextBlock()){
+			leftBuffers = RLoader.loadNextBlocks(Setting.memorySize-1);
+			SLoader.reset();
+			while(SLoader.hasNextBlock()){
+				rightBuffer = SLoader.loadNextBlocks(1)[0];
+				
+				for(Block lBlock: leftBuffers){
+					if(lBlock != null){
+						for(Tuple lTuple: lBlock.tupleLst){
+							for(Tuple rTuple: rightBuffer.tupleLst){
+								if(lTuple.key == rTuple.key){
+									Tuple temp = new Tuple(lTuple.key, String.format("(%s, %s", lTuple.value, rTuple.value));
+									if(!tempOutput.insertTuple(temp)){
+										relRS.writeBlock(tempOutput);
+										numIO++;
+										tempOutput = new Block();
+										tempOutput.insertTuple(temp);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		relRS.writeBlock(tempOutput);
+		numIO++;
+		
+		
+		return numIO;
+	}
+	
 	/**
 	 * Join relations relR and relS using Setting.memorySize buffers of memory
 	 * to produce the result relation relRS
@@ -457,7 +499,8 @@ public class Algorithms {
 		System.out.println("Num tuples in R: "+relR.getNumTuples());
 		int IOCost = algo.hashJoinRelations(relR, relS, relRS);
 		System.out.println("NumIO: "+IOCost);
-		
+		relRS.printRelation(true, true);
+		System.out.println("Num Tuples="+relRS.getNumTuples());
 		
 
 	}
