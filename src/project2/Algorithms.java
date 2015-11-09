@@ -10,6 +10,8 @@ package project2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+
 import project2.Relation.RelationLoader;
 import project2.Relation.RelationWriter;
 
@@ -186,7 +188,7 @@ public class Algorithms {
 	
 	private int getMinBlockIndex(Block[] blockBuffers){
 		Tuple temp = null;
-		int minIndex = 0;
+		int minIndex = -1;
 		int i = 0;
 		int flag = -1;
 		for (Block block : blockBuffers) {
@@ -354,6 +356,7 @@ public class Algorithms {
 		ArrayList<Relation> Ssublists = new ArrayList<>();
 		numIO += createSublists(relS.getRelationLoader(), Ssublists);
 		
+		/* Phase 2 */
 		/* Load first block of each sublist to blockBuffers */
 		Block[] RblockBuffers = new Block[Rsublists.size()];	/* Simulate block buffers in memory */
 		Block[] SblockBuffers = new Block[Ssublists.size()];
@@ -365,33 +368,96 @@ public class Algorithms {
 		numIO += loadFirstBlocksToMem(Rsublists, RblockBuffers, RsubLoaders);
 		numIO += loadFirstBlocksToMem(Ssublists, SblockBuffers, SsubLoaders);
 		
-		/* Get smallest tuple from each sublist*/
-		Tuple Rsmallest = RblockBuffers[getMinBlockIndex(RblockBuffers)].tupleLst.get(0);
-		Tuple Ssmallest = SblockBuffers[getMinBlockIndex(SblockBuffers)].tupleLst.get(0);
-		
-		if(Rsmallest.key == Ssmallest.key){
-			System.out.println(String.format("Join: %s (%s, %s)", Rsmallest.key, Rsmallest.value, Ssmallest.value));
+		ArrayList<Tuple> results = new ArrayList<>();
+		while(true){
+			/* Get smallest tuple from each sublist*/
+			int minIndexR = getMinBlockIndex(RblockBuffers);
+			int minIndexS = getMinBlockIndex(SblockBuffers);
+			if(minIndexR == -1 || minIndexS == -1)
+				break;
+			Tuple Rsmallest = RblockBuffers[minIndexR].tupleLst.get(0);
+			Tuple Ssmallest = SblockBuffers[minIndexS].tupleLst.get(0);
 			
-			// for each Rsmallest, join with all items in S
-			// Assumption: will only merge for tuples in memory, 
-			// if >20 tuples in S has the same value as R, this will not work
-			
-		}
-		else if (Rsmallest.key < Ssmallest.key){
-			/* Remove Rsmallest */
-		}
-		else if (Ssmallest.key < Rsmallest.key){
-			/* Remove Ssmallest */
+			if(Rsmallest.key == Ssmallest.key){
+				numIO += joinSmallestTuples(Rsmallest.key, RblockBuffers, SblockBuffers, RsubLoaders, SsubLoaders, results);
+				
+			}
+			else if (Rsmallest.key < Ssmallest.key){
+				/* Remove Rsmallest */
+				RblockBuffers[minIndexR].tupleLst.remove(0);
+				if(RblockBuffers[minIndexR].getNumTuples()==0 && RsubLoaders.get(minIndexR).hasNextBlock()){
+					RblockBuffers[minIndexR] = RsubLoaders.get(minIndexR).loadNextBlocks(1)[0];
+					numIO++;
+				}
+				
+			}
+			else if (Ssmallest.key < Rsmallest.key){
+				/* Remove Ssmallest */
+				SblockBuffers[minIndexS].tupleLst.remove(0);
+				if(SblockBuffers[minIndexS].getNumTuples()==0 && SsubLoaders.get(minIndexS).hasNextBlock()){
+					SblockBuffers[minIndexS] = SsubLoaders.get(minIndexS).loadNextBlocks(1)[0];
+					numIO++;
+				}
+			}
 		}
 		
-
+		writeTuplesToRelation(relRS, results);
 		return numIO;
 	}
 	
-//	private int mergeRtoS(Relation relRS, Tuple Rsmallest ){
-//		
-//	}
-
+	private int joinSmallestTuples(int smallestKey, Block[] RblockBuffers, Block[] SblockBuffers,
+			ArrayList<RelationLoader> RsubLoaders, ArrayList<RelationLoader> SsubLoaders, ArrayList<Tuple> results){
+		int numIO=0;
+		
+		/* RSmallestTuples: List of Tuples that contain smallestKey */
+		ArrayList<Tuple> RSmallestTuples = new ArrayList<>();
+		ArrayList<Tuple> SSmallestTuples = new ArrayList<>();
+		
+		numIO += extractTuplesWithKey(smallestKey, RblockBuffers, RsubLoaders, RSmallestTuples);
+		numIO += extractTuplesWithKey(smallestKey, SblockBuffers, SsubLoaders, SSmallestTuples);
+		
+		cartesianJoin(RSmallestTuples, SSmallestTuples, results);
+		
+		return numIO;
+	}
+	
+	private int extractTuplesWithKey(int smallestKey, Block[] blockBuffers, ArrayList<RelationLoader> subLoaders,
+									ArrayList<Tuple> smallestTuples){
+		int numIO=0;
+		
+		int i=0;
+		for(Block b: blockBuffers){
+			if(b != null){
+				for (Iterator<Tuple> tuples = b.tupleLst.iterator(); tuples.hasNext();) {
+				    Tuple t = tuples.next();
+					if(t.key != smallestKey)
+						break;
+					else{
+						if(t.key == smallestKey){
+							smallestTuples.add(t);
+							tuples.remove();	// Remove current iterator
+							
+							if(b.getNumTuples()==0 && subLoaders.get(i).hasNextBlock()){
+								blockBuffers[i] = subLoaders.get(i).loadNextBlocks(1)[0];
+								numIO++;
+							}
+						}
+					}
+				}
+			}
+			
+			i++;
+		}
+		return numIO;
+	}
+	
+	private void cartesianJoin(ArrayList<Tuple> RSmallestTuples, ArrayList<Tuple> SSmallestTuples, ArrayList<Tuple> results){
+		for(Tuple rTuple: RSmallestTuples)
+			for(Tuple sTuple: SSmallestTuples){
+				Tuple temp = new Tuple(rTuple.key, String.format("(%s, %s)", rTuple.value, sTuple.value));
+				results.add(temp);
+			}
+	}
 	/**
 	 * Example usage of classes.
 	 */
@@ -472,24 +538,25 @@ public class Algorithms {
 //		System.out.println("NumIO = "+MSCost);
 		
 		/* Refined Sort-Merge */
-//		Relation relRS = new Relation("RelRS");
-//		System.out.println("Num tuples in R: "+relR.getNumTuples());
-//		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
-//		System.out.println("Num tuples in R: "+relR.getNumTuples());
+		Relation relRS = new Relation("RelRS");
+		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
+		relRS.printRelation(true, true);
+		System.out.println("Num Tuples="+relRS.getNumTuples());
 		
 		/* HashJoinRelation */
-		System.out.println("-----Test HashJoin Algorithm------");
-		Relation relRS = new Relation("RelRS");
-		System.out.println("Num tuples in R: "+relR.getNumTuples());
-		int IOCost = algo.hashJoinRelations(relR, relS, relRS);
-		System.out.println("NumIO: "+IOCost);
-		relRS.printRelation(true, true);
-		System.out.println("Num Tuples="+relRS.getNumTuples());
-		
-		System.out.println("------Relation after sort-------");
-		algo.mergeSortRelation(relRS);
-		relRS.printRelation(true, true);
-		System.out.println("Num Tuples="+relRS.getNumTuples());
+//		System.out.println("-----Test HashJoin Algorithm------");
+//		Relation relRS = new Relation("RelRS");
+//		System.out.println("Num tuples in R: "+relR.getNumTuples());
+//		int IOCost = algo.hashJoinRelations(relR, relS, relRS);
+//		System.out.println("NumIO: "+IOCost);
+//		relRS.printRelation(true, true);
+//		System.out.println("Num Tuples="+relRS.getNumTuples());
+//		
+//		// Sort relRS to match with result
+//		System.out.println("------Relation after sort-------");
+//		algo.mergeSortRelation(relRS);
+//		relRS.printRelation(true, true);
+//		System.out.println("Num Tuples="+relRS.getNumTuples());
 	}
 
 	/**
