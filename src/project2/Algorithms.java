@@ -360,8 +360,6 @@ public class Algorithms {
 		/* Load first block of each sublist to blockBuffers */
 		Block[] RblockBuffers = new Block[Rsublists.size()];	/* Simulate block buffers in memory */
 		Block[] SblockBuffers = new Block[Ssublists.size()];
-		Block blockOutput = new Block();	/* Simulate single block output in memory */
-		boolean hasTuple = false;	/* Condition to stop while loop below */
 		
 		ArrayList<RelationLoader> RsubLoaders = new ArrayList<>();
 		ArrayList<RelationLoader> SsubLoaders = new ArrayList<>();
@@ -373,8 +371,10 @@ public class Algorithms {
 			/* Get smallest tuple from each sublist*/
 			int minIndexR = getMinBlockIndex(RblockBuffers);
 			int minIndexS = getMinBlockIndex(SblockBuffers);
-			if(minIndexR == -1 || minIndexS == -1)
+			if(minIndexR == -1 || minIndexS == -1){
+				System.out.println("To debug");
 				break;
+			}
 			Tuple Rsmallest = RblockBuffers[minIndexR].tupleLst.get(0);
 			Tuple Ssmallest = SblockBuffers[minIndexS].tupleLst.get(0);
 			
@@ -409,7 +409,7 @@ public class Algorithms {
 			ArrayList<RelationLoader> RsubLoaders, ArrayList<RelationLoader> SsubLoaders, ArrayList<Tuple> results){
 		int numIO=0;
 		
-		/* RSmallestTuples: List of Tuples that contain smallestKey */
+		/* RSmallestTuples: List of all Tuples from R that contain smallestKey */
 		ArrayList<Tuple> RSmallestTuples = new ArrayList<>();
 		ArrayList<Tuple> SSmallestTuples = new ArrayList<>();
 		
@@ -427,25 +427,26 @@ public class Algorithms {
 		
 		int i=0;
 		for(Block b: blockBuffers){
-			if(b != null){
-				for (Iterator<Tuple> tuples = b.tupleLst.iterator(); tuples.hasNext();) {
-				    Tuple t = tuples.next();
-					if(t.key != smallestKey)
-						break;
-					else{
-						if(t.key == smallestKey){
-							smallestTuples.add(t);
-							tuples.remove();	// Remove current iterator
-							
-							if(b.getNumTuples()==0 && subLoaders.get(i).hasNextBlock()){
-								blockBuffers[i] = subLoaders.get(i).loadNextBlocks(1)[0];
-								numIO++;
-							}
+			while(b!=null && b.getNumTuples()!=0){
+				Iterator<Tuple> tuples = b.tupleLst.iterator();
+			    while (tuples.hasNext()) {
+			    	Tuple t = tuples.next();
+			    	if(t.key != smallestKey){
+			    		b = null; 	// to stop while(b!=null)
+			    		break;
+			    	}
+			    	else {
+						smallestTuples.add(t);
+						tuples.remove();	// Remove current iterator
+						
+						if(b.getNumTuples()==0 && subLoaders.get(i).hasNextBlock()){
+							blockBuffers[i] = subLoaders.get(i).loadNextBlocks(1)[0];
+							b = blockBuffers[i];
+							numIO++;
 						}
 					}
 				}
 			}
-			
 			i++;
 		}
 		return numIO;
@@ -454,6 +455,7 @@ public class Algorithms {
 	private void cartesianJoin(ArrayList<Tuple> RSmallestTuples, ArrayList<Tuple> SSmallestTuples, ArrayList<Tuple> results){
 		for(Tuple rTuple: RSmallestTuples)
 			for(Tuple sTuple: SSmallestTuples){
+				System.out.println("Join "+ rTuple.key + String.format("(%s, %s)", rTuple.value, sTuple.value));
 				Tuple temp = new Tuple(rTuple.key, String.format("(%s, %s)", rTuple.value, sTuple.value));
 				results.add(temp);
 			}
@@ -542,7 +544,7 @@ public class Algorithms {
 		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
 		relRS.printRelation(true, true);
 		System.out.println("Num Tuples="+relRS.getNumTuples());
-		
+//		
 		/* HashJoinRelation */
 //		System.out.println("-----Test HashJoin Algorithm------");
 //		Relation relRS = new Relation("RelRS");
