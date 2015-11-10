@@ -100,21 +100,12 @@ public class Algorithms {
 		int numIO = 0;
 		while (rLoader.hasNextBlock()) {
 			Block[] blocks = rLoader.loadNextBlocks(Setting.memorySize);
-
-			/* Statistics: cost to read from disk
-			 * Assume: every read will read M blocks from disk, even the last block.
-			 * Update: wrong! must count number of non-null elements in array
-			 * TODO: fix this
-			 */
-//			numIO += blocks.length;
-
 			ArrayList<Tuple> tempTuples = new ArrayList<>();
 
 			/* Add all tuples to memory */
 			for (Block b : blocks) {
 				if (b != null) {
 					tempTuples.addAll(b.tupleLst);
-//					b.print(false);
 					numIO++;
 				}
 			}
@@ -207,7 +198,8 @@ public class Algorithms {
 			}
 			i++;
 		}
-		return minIndex;
+		
+		return minIndex;	// Return -1 if blockBuffers is empty
 	}
 
 	private void copyToRel(Relation result, Relation rel){
@@ -306,7 +298,7 @@ public class Algorithms {
 	}
 
 	private int join2sublists(RelationLoader RLoader, RelationLoader SLoader, ArrayList<Tuple> results){
-		int numIO=0;
+		int leftIO=0, rightIO=0;
 		/* Load R into M-1 buffers. Assume R's size is smaller */
 		Block[] leftBuffers = new Block[Setting.memorySize-1];
 		Block rightBuffer;
@@ -315,11 +307,11 @@ public class Algorithms {
 			SLoader.reset();
 			while(SLoader.hasNextBlock()){
 				rightBuffer = SLoader.loadNextBlocks(1)[0];
-				numIO++;	// Cost to load rightBuffer
+				rightIO++;	// Cost to load rightBuffer
 				
 				for(Block lBlock: leftBuffers){
 					if(lBlock != null){
-						numIO++;	// Cost to read leftBuffers
+						leftIO++;	// Cost to read leftBuffers, repeated for each rightBuffer
 						for(Tuple lTuple: lBlock.tupleLst){
 							for(Tuple rTuple: rightBuffer.tupleLst){
 								if(lTuple.key == rTuple.key){
@@ -332,7 +324,7 @@ public class Algorithms {
 				}
 			}
 		}
-		return numIO;
+		return rightIO+leftIO/rightIO;
 	}
 	
 	/**
@@ -542,42 +534,42 @@ public class Algorithms {
 		System.out.println("---------Finish populating relations----------\n\n");
 
 		/* MergeSortRelation */
-//		System.out.println("#Blocks="+relS.getNumBlocks());
-//		int IOCostTheory = 3*(relS.getNumBlocks());
+//		System.out.println("#Blocks="+relR.getNumBlocks());
+//		int IOCostTheory = 3*(relR.getNumBlocks());
 //		System.out.println("-----Test Merge Sort Algorithm------");
-//		int MSCost = algo.mergeSortRelation(relS);
+//		int MSCost = algo.mergeSortRelation(relR);
 //		if(MSCost != -1){
 //	//		relS.printRelation(true, true);
 //			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+MSCost);
 //		}
 		
 		/* Refined Sort-Merge */
-//		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
-//		System.out.println();
-//		Relation relRS = new Relation("RelRS");
-//		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
-//		if(RSMCost != -1){
-//			relRS.printRelation(true, true);
-//			System.out.println("Num Tuples="+relRS.getNumTuples());
-//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+RSMCost);
-//		}
+		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
+		System.out.println();
+		Relation relRS = new Relation("RelRS");
+		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
+		if(RSMCost != -1){
+			relRS.printRelation(true, true);
+			System.out.println("Num Tuples="+relRS.getNumTuples());
+			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+RSMCost);
+		}
 
 		/* HashJoinRelation */
-		System.out.println("R's #blocks= "+relR.getNumBlocks()+"\tS's #blocks= "+relS.getNumBlocks());
-		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
-		System.out.println("-----Test HashJoin Algorithm------");
-		Relation relRS = new Relation("RelRS");
-		System.out.println("Num tuples in R: "+relR.getNumTuples());
-		int HJCost = algo.hashJoinRelations(relR, relS, relRS);
-//		relRS.printRelation(true, true);
-		
-		// Sort relRS to match with SQL result
-		if(HJCost != -1){
-			System.out.println("------Relation after sort-------");
-			algo.mergeSortRelation(relRS);
-			relRS.printRelation(true, true);
-			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+HJCost);
-		}
+//		System.out.println("R's #blocks= "+relR.getNumBlocks()+"\tS's #blocks= "+relS.getNumBlocks());
+//		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
+//		System.out.println("-----Test HashJoin Algorithm------");
+//		Relation relRS = new Relation("RelRS");
+//		System.out.println("Num tuples in R: "+relR.getNumTuples());
+//		int HJCost = algo.hashJoinRelations(relR, relS, relRS);
+////		relRS.printRelation(true, true);
+//		
+//		// Sort relRS to match with SQL result
+//		if(HJCost != -1){
+//			System.out.println("------Relation after sort-------");
+//			algo.mergeSortRelation(relRS);
+//			relRS.printRelation(true, true);
+//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+HJCost);
+//		}
 	}
 
 	/**
