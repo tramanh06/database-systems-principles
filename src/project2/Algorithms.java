@@ -398,6 +398,7 @@ public class Algorithms {
 			else if (Rsmallest.key < Ssmallest.key){
 				/* Remove Rsmallest */
 				RblockBuffers[minIndexR].tupleLst.remove(0);
+				// load next block if block is empty
 				if(RblockBuffers[minIndexR].getNumTuples()==0 && RsubLoaders.get(minIndexR).hasNextBlock()){
 					RblockBuffers[minIndexR] = RsubLoaders.get(minIndexR).loadNextBlocks(1)[0];
 					numIO++;
@@ -407,6 +408,7 @@ public class Algorithms {
 			else if (Ssmallest.key < Rsmallest.key){
 				/* Remove Ssmallest */
 				SblockBuffers[minIndexS].tupleLst.remove(0);
+				// load next block if block is empty
 				if(SblockBuffers[minIndexS].getNumTuples()==0 && SsubLoaders.get(minIndexS).hasNextBlock()){
 					SblockBuffers[minIndexS] = SsubLoaders.get(minIndexS).loadNextBlocks(1)[0];
 					numIO++;
@@ -465,7 +467,8 @@ public class Algorithms {
 		return numIO;
 	}
 	
-	private void cartesianJoin(ArrayList<Tuple> RSmallestTuples, ArrayList<Tuple> SSmallestTuples, ArrayList<Tuple> results){
+	private void cartesianJoin(ArrayList<Tuple> RSmallestTuples, ArrayList<Tuple> SSmallestTuples, 
+			ArrayList<Tuple> results){
 		for(Tuple rTuple: RSmallestTuples)
 			for(Tuple sTuple: SSmallestTuples){
 				Tuple temp = new Tuple(rTuple.key, String.format("(%s, %s)", rTuple.value, sTuple.value));
@@ -662,13 +665,13 @@ public class Algorithms {
 		Algorithms algo = new Algorithms();
 
 		/* MergeSortRelation */
-//		algo.testCasesMerge();
+		algo.testCasesMerge();
 		
 		/* Refined Sort-Merge */
 //		algo.testcasesRSMJ();
 
 		/* HashJoinRelation */
-		algo.testcasesHJ();
+//		algo.testcasesHJ();
 	}
 
 	/**
