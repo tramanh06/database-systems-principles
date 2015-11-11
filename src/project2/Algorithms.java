@@ -8,6 +8,7 @@ package project2;
 //package project2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -243,8 +244,15 @@ public class Algorithms {
 		numIO += hashByBlock(RLoader, RSublists);
 		numIO += hashByBlock(SLoader, SSublists);
 		
-		System.out.println("NumIO="+numIO);		// Note: this IO may not be equal to 2(B(R)+B(S)), 
+//		System.out.println("NumIO="+numIO);		// Note: this IO may not be equal to 2(B(R)+B(S)), 
 												// because hashed sublists are not condensed
+		ArrayList<Relation> RSublists_AL = new ArrayList<Relation>(Arrays.asList(RSublists));
+		ArrayList<Relation> SSublists_AL = new ArrayList<Relation>(Arrays.asList(SSublists));
+		System.out.println("Relation R buckets: ");
+		sublistsStats(RSublists_AL);
+		System.out.println("Relation S buckets: ");
+		sublistsStats(SSublists_AL);
+		
 		
 		/* Phase 2: Compare each sublist from R to each from S*/
 		ArrayList<Tuple> results = new ArrayList<>();
@@ -543,6 +551,19 @@ public class Algorithms {
 				Collections.max(stat_tuples), Collections.min(stat_tuples), sum_tuples/sublists.size()));
 	}
 	
+	/**
+	 * Testing cases Merge.
+	 */	
+	private void testCasesMerge() {
+		Algorithms algorithm = new Algorithms();
+
+		// Test Case 
+		for(int i=20; i>=0; i--){
+			Setting.blockFactor = 20;
+			Setting.memorySize = i;
+			algorithm.testMerge(21-i, "Minimum Memory");
+		}
+	}
 	private void testMerge(int cases, String testType) {
 		int numIO;
 		int numTuples;
@@ -565,19 +586,18 @@ public class Algorithms {
 	}
 
 	/**
-	 * Testing cases Merge.
+	 * Test cases for Refined Sort Merge join
 	 */
-	private void testCasesMerge() {
+	private void testcasesRSMJ(){
 		Algorithms algorithm = new Algorithms();
 
 		// Test Case 
 		for(int i=20; i>=0; i--){
 			Setting.blockFactor = 20;
 			Setting.memorySize = i;
-			algorithm.testMerge(21-i, "Minimum Memory");
+			algorithm.testRefinedSMJ(21-i, "Minimum Memory Size");
 		}
 	}
-
 	private void testRefinedSMJ(int cases, String testType){
 		/* Populate relation */
 		Relation relR = new Relation("RelR");
@@ -601,15 +621,38 @@ public class Algorithms {
 		System.out.println("\n");
 	}
 	
-	private void testcasesRSMJ(){
+	private void testcasesHJ(){
 		Algorithms algorithm = new Algorithms();
 
 		// Test Case 
 		for(int i=20; i>=0; i--){
 			Setting.blockFactor = i;
 			Setting.memorySize = 20;
-			algorithm.testRefinedSMJ(21-i, "Minimum Block Factor");
+			algorithm.testHJ(21-i, "Minimum Block Factor");
 		}
+	}
+	
+	private void testHJ(int cases, String testType){
+		/* Populate relation */
+		Relation relR = new Relation("RelR");
+		relR.populateRelationFromFile("RelR.txt");
+		relR.printRelation(false, false);
+		
+		Relation relS = new Relation("RelS");
+		relS.populateRelationFromFile("RelS.txt");
+		relS.printRelation(false, false);
+		
+		System.out.println("------TestCase " + cases + ": " + testType);
+		System.out.println("Memory Size = " + Setting.memorySize + ", Block Factor = " + Setting.blockFactor);
+		
+		Relation relRS = new Relation("RelRS");
+		int numIO = hashJoinRelations(relR, relS, relRS);
+		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
+		if (numIO != -1) {
+			System.out.println("\nHash Join: IO Theory: "+IOCostTheory+"	Actual IO Cost : " + numIO);
+			relRS.printRelation(false, false);
+		}
+		System.out.println("\n");
 	}
 	
 	/**
@@ -618,38 +661,14 @@ public class Algorithms {
 	private static void testCases() {
 		Algorithms algo = new Algorithms();
 
-		/* Populate relation */
-//		System.out.println("---------Populating two relations----------");
-//		Relation relR = new Relation("RelR");
-//		int numTuples = relR.populateRelationFromFile("RelR.txt");
-//		System.out.println("Relation RelR contains " + numTuples + " tuples.");
-//		Relation relS = new Relation("RelS");
-//		numTuples = relS.populateRelationFromFile("RelS.txt");
-//		System.out.println("Relation RelS contains " + numTuples + " tuples.");
-//		System.out.println("---------Finish populating relations----------\n\n");
-
 		/* MergeSortRelation */
 //		algo.testCasesMerge();
 		
 		/* Refined Sort-Merge */
-		algo.testcasesRSMJ();
+//		algo.testcasesRSMJ();
 
 		/* HashJoinRelation */
-//		System.out.println("R's #blocks= "+relR.getNumBlocks()+"\tS's #blocks= "+relS.getNumBlocks());
-//		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
-//		System.out.println("-----Test HashJoin Algorithm------");
-//		Relation relRS = new Relation("RelRS");
-//		System.out.println("Num tuples in R: "+relR.getNumTuples());
-//		int HJCost = algo.hashJoinRelations(relR, relS, relRS);
-////		relRS.printRelation(true, true);
-//		
-//		// Sort relRS to match with SQL result
-//		if(HJCost != -1){
-//			System.out.println("------Relation after sort-------");
-//			algo.mergeSortRelation(relRS);
-//			relRS.printRelation(true, true);
-//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+HJCost);
-//		}
+		algo.testcasesHJ();
 	}
 
 	/**
@@ -659,6 +678,5 @@ public class Algorithms {
 	 */
 	public static void main(String[] arg) {
 		Algorithms.testCases();
-//		testCasesMerge();
 	}
 }
