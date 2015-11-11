@@ -44,7 +44,6 @@ public class Algorithms {
 		numIO += createSublists(rLoader, sublists);
 		
 		System.out.println("Number of sublists written to disk: " + sublists.size());
-//		System.out.println("NumIO="+numIO);		// NumIO correct until here
 
 		/* 
 		 * Phase 2: Merge sort
@@ -120,7 +119,8 @@ public class Algorithms {
 		return numIO;
 	}
 
-	private int loadFirstBlocksToMem(ArrayList<Relation> sublists, Block[] blockBuffers, ArrayList<RelationLoader> subLoaders){
+	private int loadFirstBlocksToMem(ArrayList<Relation> sublists, 
+			Block[] blockBuffers, ArrayList<RelationLoader> subLoaders){
 		int i=0;
 		int numIO = 0;
 		RelationLoader tempLoader;
@@ -131,7 +131,7 @@ public class Algorithms {
 				blockBuffers[i] = tempLoader.loadNextBlocks(1)[0];
 			}
 			subLoaders.add(tempLoader);
-			numIO ++;	/* Cost of eventual loading blocks of each sublist */
+			numIO ++;	/* Cost of loading block */
 			i++;
 		}
 		return numIO;
@@ -173,7 +173,6 @@ public class Algorithms {
 				numIO++;
 			}
 		}
-
 		return numIO;
 	}
 	
