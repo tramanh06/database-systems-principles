@@ -356,6 +356,12 @@ public class Algorithms {
 		ArrayList<Relation> Ssublists = new ArrayList<>();
 		numIO += createSublists(relS.getRelationLoader(), Ssublists);
 		
+		// Sublists statistics
+		System.out.println("Sublists statistics for RelR:");
+		sublistsStats(Rsublists);
+		System.out.println("Sublists statistics for RelS:");
+		sublistsStats(Ssublists);
+		
 		/* Phase 2 */
 		/* Load first block of each sublist to blockBuffers */
 		Block[] RblockBuffers = new Block[Rsublists.size()];	/* Simulate block buffers in memory */
@@ -372,7 +378,6 @@ public class Algorithms {
 			int minIndexR = getMinBlockIndex(RblockBuffers);
 			int minIndexS = getMinBlockIndex(SblockBuffers);
 			if(minIndexR == -1 || minIndexS == -1){
-				System.out.println("To debug");
 				break;
 			}
 			Tuple Rsmallest = RblockBuffers[minIndexR].tupleLst.get(0);
@@ -455,7 +460,6 @@ public class Algorithms {
 	private void cartesianJoin(ArrayList<Tuple> RSmallestTuples, ArrayList<Tuple> SSmallestTuples, ArrayList<Tuple> results){
 		for(Tuple rTuple: RSmallestTuples)
 			for(Tuple sTuple: SSmallestTuples){
-				System.out.println("Join "+ rTuple.key + String.format("(%s, %s)", rTuple.value, sTuple.value));
 				Tuple temp = new Tuple(rTuple.key, String.format("(%s, %s)", rTuple.value, sTuple.value));
 				results.add(temp);
 			}
@@ -548,7 +552,7 @@ public class Algorithms {
 		relR = new Relation(relName);
 		numTuples = relR.populateRelationFromFile("RelR.txt");
 		System.out.println("Relation "+relName+" contains " + numTuples + " tuples.");
-		System.out.println("TestCase " + cases + ": " + testType);
+		System.out.println("------TestCase " + cases + ": " + testType);
 		System.out.println("Memory Size = " + Setting.memorySize + ", Block Factor = " + Setting.blockFactor);
 		int IOCostTheory = 3*(relR.getNumBlocks());
 		
@@ -574,6 +578,40 @@ public class Algorithms {
 		}
 	}
 
+	private void testRefinedSMJ(int cases, String testType){
+		/* Populate relation */
+		Relation relR = new Relation("RelR");
+		relR.populateRelationFromFile("RelR.txt");
+		relR.printRelation(false, false);
+		
+		Relation relS = new Relation("RelS");
+		relS.populateRelationFromFile("RelS.txt");
+		relS.printRelation(false, false);
+		
+		System.out.println("------TestCase " + cases + ": " + testType);
+		System.out.println("Memory Size = " + Setting.memorySize + ", Block Factor = " + Setting.blockFactor);
+		
+		Relation relRS = new Relation("RelRS");
+		int numIO = refinedSortMergeJoinRelations(relR, relS, relRS);
+		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
+		if (numIO != -1) {
+			System.out.println("\nRefined Sort Merge Join: IO Theory: "+IOCostTheory+"	Actual IO Cost : " + numIO);
+			relRS.printRelation(false, false);
+		}
+		System.out.println("\n");
+	}
+	
+	private void testcasesRSMJ(){
+		Algorithms algorithm = new Algorithms();
+
+		// Test Case 
+		for(int i=20; i>=0; i--){
+			Setting.blockFactor = i;
+			Setting.memorySize = 20;
+			algorithm.testRefinedSMJ(21-i, "Minimum Block Factor");
+		}
+	}
+	
 	/**
 	 * Testing cases.
 	 */
@@ -581,28 +619,20 @@ public class Algorithms {
 		Algorithms algo = new Algorithms();
 
 		/* Populate relation */
-		System.out.println("---------Populating two relations----------");
-		Relation relR = new Relation("RelR");
-		int numTuples = relR.populateRelationFromFile("RelR.txt");
-		System.out.println("Relation RelR contains " + numTuples + " tuples.");
-		Relation relS = new Relation("RelS");
-		numTuples = relS.populateRelationFromFile("RelS.txt");
-		System.out.println("Relation RelS contains " + numTuples + " tuples.");
-		System.out.println("---------Finish populating relations----------\n\n");
+//		System.out.println("---------Populating two relations----------");
+//		Relation relR = new Relation("RelR");
+//		int numTuples = relR.populateRelationFromFile("RelR.txt");
+//		System.out.println("Relation RelR contains " + numTuples + " tuples.");
+//		Relation relS = new Relation("RelS");
+//		numTuples = relS.populateRelationFromFile("RelS.txt");
+//		System.out.println("Relation RelS contains " + numTuples + " tuples.");
+//		System.out.println("---------Finish populating relations----------\n\n");
 
 		/* MergeSortRelation */
-		algo.testCasesMerge();
+//		algo.testCasesMerge();
 		
 		/* Refined Sort-Merge */
-//		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
-//		System.out.println();
-//		Relation relRS = new Relation("RelRS");
-//		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
-//		if(RSMCost != -1){
-//			relRS.printRelation(true, true);
-//			System.out.println("Num Tuples="+relRS.getNumTuples());
-//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+RSMCost);
-//		}
+		algo.testcasesRSMJ();
 
 		/* HashJoinRelation */
 //		System.out.println("R's #blocks= "+relR.getNumBlocks()+"\tS's #blocks= "+relS.getNumBlocks());
