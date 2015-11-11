@@ -8,6 +8,7 @@ package project2;
 //package project2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ public class Algorithms {
 		ArrayList<Relation> sublists = new ArrayList<>();
 		numIO += createSublists(rLoader, sublists);
 		
-		System.out.println("Number of sublists written to disk: " + sublists.size());
+		sublistsStats(sublists);
 
 		/* 
 		 * Phase 2: Merge sort
@@ -516,10 +517,67 @@ public class Algorithms {
 
 	}
 
+	private void sublistsStats(ArrayList<Relation> sublists){
+		ArrayList<Integer> stat_blocks = new ArrayList<>();
+		ArrayList<Integer> stat_tuples = new ArrayList<>();
+		float sum_blocks=0;
+		float sum_tuples=0;
+		
+		for(Relation sublist : sublists){
+			stat_blocks.add(sublist.getNumBlocks());
+			sum_blocks += sublist.getNumBlocks();
+			stat_tuples.add(sublist.getNumTuples());
+			sum_tuples += sublist.getNumTuples();
+		}
+		
+		System.out.println("Sublists statistics: ");
+		System.out.println("Total Sublists:\t"+sublists.size());
+		System.out.println("\t\tMax length|Min Length|Avg Length");
+		System.out.println(String.format("In blocks:\t\t%s\t%s\t%s", 
+				Collections.max(stat_blocks), Collections.min(stat_blocks), sum_blocks/sublists.size()));
+		System.out.println(String.format("In Tuples:\t\t%s\t%s\t%s", 
+				Collections.max(stat_tuples), Collections.min(stat_tuples), sum_tuples/sublists.size()));
+	}
+	
+	private void testMerge(int cases, String testType) {
+		int numIO;
+		int numTuples;
+		Relation relR;
+		String relName = "RelR";
+
+		relR = new Relation(relName);
+		numTuples = relR.populateRelationFromFile("RelR.txt");
+		System.out.println("Relation "+relName+" contains " + numTuples + " tuples.");
+		System.out.println("TestCase " + cases + ": " + testType);
+		System.out.println("Memory Size = " + Setting.memorySize + ", Block Factor = " + Setting.blockFactor);
+		int IOCostTheory = 3*(relR.getNumBlocks());
+		
+		numIO = mergeSortRelation(relR);
+		if (numIO != -1) {
+			System.out.println("\nMerge Sort: IO Theory: "+IOCostTheory+"	Actual IO Cost : " + numIO);
+			relR.printRelation(false, false);
+		}
+		System.out.println("\n");
+	}
+
+	/**
+	 * Testing cases Merge.
+	 */
+	private void testCasesMerge() {
+		Algorithms algorithm = new Algorithms();
+
+		// Test Case 
+		for(int i=20; i>=0; i--){
+			Setting.blockFactor = 20;
+			Setting.memorySize = i;
+			algorithm.testMerge(21-i, "Minimum Memory");
+		}
+	}
+
 	/**
 	 * Testing cases.
 	 */
-	public static void testCases() {
+	private static void testCases() {
 		Algorithms algo = new Algorithms();
 
 		/* Populate relation */
@@ -533,25 +591,18 @@ public class Algorithms {
 		System.out.println("---------Finish populating relations----------\n\n");
 
 		/* MergeSortRelation */
-//		System.out.println("#Blocks="+relR.getNumBlocks());
-//		int IOCostTheory = 3*(relR.getNumBlocks());
-//		System.out.println("-----Test Merge Sort Algorithm------");
-//		int MSCost = algo.mergeSortRelation(relR);
-//		if(MSCost != -1){
-//	//		relS.printRelation(true, true);
-//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+MSCost);
-//		}
+		algo.testCasesMerge();
 		
 		/* Refined Sort-Merge */
-		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
-		System.out.println();
-		Relation relRS = new Relation("RelRS");
-		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
-		if(RSMCost != -1){
-			relRS.printRelation(true, true);
-			System.out.println("Num Tuples="+relRS.getNumTuples());
-			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+RSMCost);
-		}
+//		int IOCostTheory = 3*(relR.getNumBlocks()+relS.getNumBlocks());
+//		System.out.println();
+//		Relation relRS = new Relation("RelRS");
+//		int RSMCost = algo.refinedSortMergeJoinRelations(relR, relS, relRS);
+//		if(RSMCost != -1){
+//			relRS.printRelation(true, true);
+//			System.out.println("Num Tuples="+relRS.getNumTuples());
+//			System.out.println("IO Theory: "+IOCostTheory+"\tActual IO: "+RSMCost);
+//		}
 
 		/* HashJoinRelation */
 //		System.out.println("R's #blocks= "+relR.getNumBlocks()+"\tS's #blocks= "+relS.getNumBlocks());
@@ -578,6 +629,6 @@ public class Algorithms {
 	 */
 	public static void main(String[] arg) {
 		Algorithms.testCases();
-		// examples();
+//		testCasesMerge();
 	}
 }
