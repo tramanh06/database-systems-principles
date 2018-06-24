@@ -1,7 +1,8 @@
 -- script to create table in MySQL
 
--- create database
--- create database dblp;
+-- commands to run from terminal
+-- cd to folder
+-- mysql -uroot < create_tables.sql -t
 use dblp;
 
 SET NAMES utf8mb4;

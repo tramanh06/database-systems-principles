@@ -7,3 +7,5 @@ Data/
 # Python specific
 *.pyc
 
+.DS_Store
+.idea
