@@ -1,0 +1,233 @@
+Relation RelR contains 416 tuples.
+TestCase 1: Minimum Memory
+Memory Size = 20, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	1	10.5
+In Tuples:		400	16	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 2: Minimum Memory
+Memory Size = 19, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		19	2	10.5
+In Tuples:		380	36	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 3: Minimum Memory
+Memory Size = 18, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		18	3	10.5
+In Tuples:		360	56	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 4: Minimum Memory
+Memory Size = 17, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		17	4	10.5
+In Tuples:		340	76	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 5: Minimum Memory
+Memory Size = 16, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		16	5	10.5
+In Tuples:		320	96	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 6: Minimum Memory
+Memory Size = 15, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		15	6	10.5
+In Tuples:		300	116	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 7: Minimum Memory
+Memory Size = 14, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		14	7	10.5
+In Tuples:		280	136	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 8: Minimum Memory
+Memory Size = 13, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		13	8	10.5
+In Tuples:		260	156	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 9: Minimum Memory
+Memory Size = 12, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		12	9	10.5
+In Tuples:		240	176	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 10: Minimum Memory
+Memory Size = 11, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		11	10	10.5
+In Tuples:		220	196	208.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 11: Minimum Memory
+Memory Size = 10, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		10	1	7.0
+In Tuples:		200	16	138.66667
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 12: Minimum Memory
+Memory Size = 9, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		9	3	7.0
+In Tuples:		180	56	138.66667
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 13: Minimum Memory
+Memory Size = 8, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		8	5	7.0
+In Tuples:		160	96	138.66667
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 14: Minimum Memory
+Memory Size = 7, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		7	7	7.0
+In Tuples:		140	136	138.66667
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 15: Minimum Memory
+Memory Size = 6, Block Factor = 20
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		6	3	5.25
+In Tuples:		120	56	104.0
+
+Merge Sort: IO Theory: 63	Actual IO Cost : 63
+Relation: RelR	NumBlocks:21	NumTuples:416
+
+
+Relation RelR contains 416 tuples.
+TestCase 16: Minimum Memory
+Memory Size = 5, Block Factor = 20
+MergeSort Error! Assumption 2 is not satisfied.
+
+
+Relation RelR contains 416 tuples.
+TestCase 17: Minimum Memory
+Memory Size = 4, Block Factor = 20
+MergeSort Error! Assumption 2 is not satisfied.
+
+
+Relation RelR contains 416 tuples.
+TestCase 18: Minimum Memory
+Memory Size = 3, Block Factor = 20
+MergeSort Error! Assumption 2 is not satisfied.
+
+
+Relation RelR contains 416 tuples.
+TestCase 19: Minimum Memory
+Memory Size = 2, Block Factor = 20
+MergeSort Error! Assumption 2 is not satisfied.
+
+
+Relation RelR contains 416 tuples.
+TestCase 20: Minimum Memory
+Memory Size = 1, Block Factor = 20
+MergeSort Error! Assumption 2 is not satisfied.
+
+
+Relation RelR contains 416 tuples.
+TestCase 21: Minimum Memory
+Memory Size = 0, Block Factor = 20
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at project2.Algorithms.mergeSortRelation(Algorithms.java:35)
+	at project2.Algorithms.testMerge(Algorithms.java:555)
+	at project2.Algorithms.testCasesMerge(Algorithms.java:573)
+	at project2.Algorithms.main(Algorithms.java:639)

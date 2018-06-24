@@ -1,0 +1,363 @@
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 1: Minimum Block Factor
+Memory Size = 20, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	19
+		Max length|Min Length|Avg Length
+In blocks:		2	1	1.7368422
+In Tuples:		27	13	21.894737
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	19
+		Max length|Min Length|Avg Length
+In blocks:		4	3	3.7368422
+In Tuples:		80	53	66.31579
+
+Hash Join: IO Theory: 252	Actual IO Cost : 292
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 2: Minimum Block Factor
+Memory Size = 19, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	18
+		Max length|Min Length|Avg Length
+In blocks:		2	1	1.6666666
+In Tuples:		32	14	23.11111
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	18
+		Max length|Min Length|Avg Length
+In blocks:		5	3	3.8888888
+In Tuples:		92	55	70.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 284
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 3: Minimum Block Factor
+Memory Size = 18, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	17
+		Max length|Min Length|Avg Length
+In blocks:		2	1	1.882353
+In Tuples:		35	18	24.470589
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	17
+		Max length|Min Length|Avg Length
+In blocks:		5	4	4.2352943
+In Tuples:		96	63	74.117645
+
+Hash Join: IO Theory: 252	Actual IO Cost : 292
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 4: Minimum Block Factor
+Memory Size = 17, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	16
+		Max length|Min Length|Avg Length
+In blocks:		2	1	1.875
+In Tuples:		35	19	26.0
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	16
+		Max length|Min Length|Avg Length
+In blocks:		5	4	4.3125
+In Tuples:		89	71	78.75
+
+Hash Join: IO Theory: 252	Actual IO Cost : 282
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 5: Minimum Block Factor
+Memory Size = 16, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	15
+		Max length|Min Length|Avg Length
+In blocks:		3	1	1.8666667
+In Tuples:		45	19	27.733334
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	15
+		Max length|Min Length|Avg Length
+In blocks:		6	4	4.733333
+In Tuples:		108	70	84.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 282
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 6: Minimum Block Factor
+Memory Size = 15, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	14
+		Max length|Min Length|Avg Length
+In blocks:		2	2	2.0
+In Tuples:		40	22	29.714285
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	14
+		Max length|Min Length|Avg Length
+In blocks:		6	4	5.0
+In Tuples:		113	72	90.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 280
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 7: Minimum Block Factor
+Memory Size = 14, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	13
+		Max length|Min Length|Avg Length
+In blocks:		3	1	2.0
+In Tuples:		42	19	32.0
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	13
+		Max length|Min Length|Avg Length
+In blocks:		6	5	5.3076925
+In Tuples:		112	85	96.92308
+
+Hash Join: IO Theory: 252	Actual IO Cost : 274
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 8: Minimum Block Factor
+Memory Size = 13, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	12
+		Max length|Min Length|Avg Length
+In blocks:		3	1	2.0
+In Tuples:		46	16	34.666668
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	12
+		Max length|Min Length|Avg Length
+In blocks:		7	5	5.8333335
+In Tuples:		131	84	105.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 272
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 9: Minimum Block Factor
+Memory Size = 12, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	11
+		Max length|Min Length|Avg Length
+In blocks:		3	2	2.3636363
+In Tuples:		46	28	37.81818
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	11
+		Max length|Min Length|Avg Length
+In blocks:		7	5	6.090909
+In Tuples:		138	94	114.545456
+
+Hash Join: IO Theory: 252	Actual IO Cost : 270
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 10: Minimum Block Factor
+Memory Size = 11, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	10
+		Max length|Min Length|Avg Length
+In blocks:		3	2	2.8
+In Tuples:		52	29	41.6
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	10
+		Max length|Min Length|Avg Length
+In blocks:		7	6	6.7
+In Tuples:		139	116	126.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 274
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 11: Minimum Block Factor
+Memory Size = 10, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	9
+		Max length|Min Length|Avg Length
+In blocks:		3	2	2.7777777
+In Tuples:		59	32	46.22222
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	9
+		Max length|Min Length|Avg Length
+In blocks:		8	7	7.5555553
+In Tuples:		151	125	140.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 270
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 12: Minimum Block Factor
+Memory Size = 9, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	8
+		Max length|Min Length|Avg Length
+In blocks:		3	3	3.0
+In Tuples:		57	48	52.0
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	8
+		Max length|Min Length|Avg Length
+In blocks:		9	8	8.375
+In Tuples:		172	146	157.5
+
+Hash Join: IO Theory: 252	Actual IO Cost : 266
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 13: Minimum Block Factor
+Memory Size = 8, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	7
+		Max length|Min Length|Avg Length
+In blocks:		4	3	3.4285715
+In Tuples:		69	51	59.42857
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	7
+		Max length|Min Length|Avg Length
+In blocks:		11	9	9.714286
+In Tuples:		207	162	180.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 268
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 14: Minimum Block Factor
+Memory Size = 7, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	6
+		Max length|Min Length|Avg Length
+In blocks:		5	3	4.0
+In Tuples:		83	53	69.333336
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	6
+		Max length|Min Length|Avg Length
+In blocks:		13	9	10.833333
+In Tuples:		248	178	210.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 262
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 15: Minimum Block Factor
+Memory Size = 6, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		5	4	4.6
+In Tuples:		93	70	83.2
+Relation S buckets: 
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		14	13	13.4
+In Tuples:		265	241	252.0
+
+Hash Join: IO Theory: 252	Actual IO Cost : 264
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 16: Minimum Block Factor
+Memory Size = 5, Block Factor = 20
+Relation R buckets: 
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		6	5	5.75
+In Tuples:		111	98	104.0
+
+Hash Join Error! Program is exiting. Sublist size is more than M-1.
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 17: Minimum Block Factor
+Memory Size = 4, Block Factor = 20
+HashJoin Error! Average bucket size is more than M-1. Program is exiting...
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 18: Minimum Block Factor
+Memory Size = 3, Block Factor = 20
+HashJoin Error! Average bucket size is more than M-1. Program is exiting...
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 19: Minimum Block Factor
+Memory Size = 2, Block Factor = 20
+HashJoin Error! Average bucket size is more than M-1. Program is exiting...
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 20: Minimum Block Factor
+Memory Size = 1, Block Factor = 20
+HashJoin Error! Average bucket size is more than M-1. Program is exiting...
+
+
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 21: Minimum Block Factor
+Memory Size = 0, Block Factor = 20
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+

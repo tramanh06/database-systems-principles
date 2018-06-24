@@ -249,7 +249,12 @@ public class Algorithms {
 		ArrayList<Relation> RSublists_AL = new ArrayList<Relation>(Arrays.asList(RSublists));
 		ArrayList<Relation> SSublists_AL = new ArrayList<Relation>(Arrays.asList(SSublists));
 		System.out.println("Relation R buckets: ");
-		sublistsStats(RSublists_AL);
+		
+		boolean fitMemory = sublistsStats(RSublists_AL);
+		if(!fitMemory){
+			System.out.println("\nHash Join Error! Program is exiting. Sublist size is more than M-1.");
+			return -1;
+		}
 		System.out.println("Relation S buckets: ");
 		sublistsStats(SSublists_AL);
 		
@@ -532,7 +537,7 @@ public class Algorithms {
 
 	}
 
-	private void sublistsStats(ArrayList<Relation> sublists){
+	private boolean sublistsStats(ArrayList<Relation> sublists){
 		ArrayList<Integer> stat_blocks = new ArrayList<>();
 		ArrayList<Integer> stat_tuples = new ArrayList<>();
 		float sum_blocks=0;
@@ -552,6 +557,11 @@ public class Algorithms {
 				Collections.max(stat_blocks), Collections.min(stat_blocks), sum_blocks/sublists.size()));
 		System.out.println(String.format("In Tuples:\t\t%s\t%s\t%s", 
 				Collections.max(stat_tuples), Collections.min(stat_tuples), sum_tuples/sublists.size()));
+		
+		// Checking for HashJoin condition
+		if(Collections.max(stat_blocks)>Setting.memorySize-1)
+			return false;
+		return true;
 	}
 	
 	/**
@@ -561,11 +571,16 @@ public class Algorithms {
 		Algorithms algorithm = new Algorithms();
 
 		// Test Case 
-		for(int i=20; i>=0; i--){
+		for(int i=20; i>0; i--){
 			Setting.blockFactor = 20;
 			Setting.memorySize = i;
 			algorithm.testMerge(21-i, "Minimum Memory");
 		}
+		
+		// Single case
+		// Setting.blockFactor = 15;
+		// Setting.memorySize = 15;
+		// algorithm.testMerge(1, "Single Case");
 	}
 	private void testMerge(int cases, String testType) {
 		int numIO;
@@ -594,12 +609,17 @@ public class Algorithms {
 	private void testcasesRSMJ(){
 		Algorithms algorithm = new Algorithms();
 
-		// Test Case 
-		for(int i=20; i>=0; i--){
-			Setting.blockFactor = 20;
-			Setting.memorySize = i;
+		// Test Case repeatedly - uncomment if wanna test all cases
+		for(int i=20; i>0; i--){
+			Setting.blockFactor = i;
+			Setting.memorySize = 20;
 			algorithm.testRefinedSMJ(21-i, "Minimum Memory Size");
 		}
+		
+		// Single case
+		// Setting.blockFactor = 15;
+		// Setting.memorySize = 15;
+		// algorithm.testRefinedSMJ(1, "Single Case");
 	}
 	private void testRefinedSMJ(int cases, String testType){
 		/* Populate relation */
@@ -628,11 +648,16 @@ public class Algorithms {
 		Algorithms algorithm = new Algorithms();
 
 		// Test Case 
-		for(int i=20; i>=0; i--){
+		for(int i=20; i>0; i--){
 			Setting.blockFactor = i;
 			Setting.memorySize = 20;
 			algorithm.testHJ(21-i, "Minimum Block Factor");
 		}
+		
+		// Single Case 
+		// Setting.blockFactor = 10;
+		// Setting.memorySize = 15;
+		// algorithm.testHJ(1, "Single Case");
 	}
 	
 	private void testHJ(int cases, String testType){
@@ -664,14 +689,15 @@ public class Algorithms {
 	private static void testCases() {
 		Algorithms algo = new Algorithms();
 
+		// Commment out the methods you don't want to test
 		/* MergeSortRelation */
 		algo.testCasesMerge();
 		
 		/* Refined Sort-Merge */
-//		algo.testcasesRSMJ();
+		algo.testcasesRSMJ();
 
 		/* HashJoinRelation */
-//		algo.testcasesHJ();
+		algo.testcasesHJ();
 	}
 
 	/**
@@ -681,5 +707,6 @@ public class Algorithms {
 	 */
 	public static void main(String[] arg) {
 		Algorithms.testCases();
+		// Uncommment the methods you don't want to test
 	}
 }

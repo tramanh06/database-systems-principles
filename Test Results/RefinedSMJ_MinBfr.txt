@@ -1,0 +1,371 @@
+Relation: RelR	NumBlocks:21	NumTuples:416
+Relation: RelS	NumBlocks:63	NumTuples:1260
+------TestCase 1: Minimum Memory Size
+Memory Size = 20, Block Factor = 20
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	1	10.5
+In Tuples:		400	16	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	3	15.75
+In Tuples:		400	60	315.0
+
+Refined Sort Merge Join: IO Theory: 252	Actual IO Cost : 252
+Relation: RelRS	NumBlocks:28	NumTuples:552
+
+
+Relation: RelR	NumBlocks:22	NumTuples:416
+Relation: RelS	NumBlocks:67	NumTuples:1260
+------TestCase 2: Minimum Memory Size
+Memory Size = 20, Block Factor = 19
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	2	11.0
+In Tuples:		380	36	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	7	16.75
+In Tuples:		380	120	315.0
+
+Refined Sort Merge Join: IO Theory: 267	Actual IO Cost : 267
+Relation: RelRS	NumBlocks:30	NumTuples:552
+
+
+Relation: RelR	NumBlocks:24	NumTuples:416
+Relation: RelS	NumBlocks:70	NumTuples:1260
+------TestCase 3: Minimum Memory Size
+Memory Size = 20, Block Factor = 18
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	4	12.0
+In Tuples:		360	56	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	10	17.5
+In Tuples:		360	180	315.0
+
+Refined Sort Merge Join: IO Theory: 282	Actual IO Cost : 282
+Relation: RelRS	NumBlocks:31	NumTuples:552
+
+
+Relation: RelR	NumBlocks:25	NumTuples:416
+Relation: RelS	NumBlocks:75	NumTuples:1260
+------TestCase 4: Minimum Memory Size
+Memory Size = 20, Block Factor = 17
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	5	12.5
+In Tuples:		340	76	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	15	18.75
+In Tuples:		340	240	315.0
+
+Refined Sort Merge Join: IO Theory: 300	Actual IO Cost : 300
+Relation: RelRS	NumBlocks:33	NumTuples:552
+
+
+Relation: RelR	NumBlocks:26	NumTuples:416
+Relation: RelS	NumBlocks:79	NumTuples:1260
+------TestCase 5: Minimum Memory Size
+Memory Size = 20, Block Factor = 16
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	6	13.0
+In Tuples:		320	96	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	19	19.75
+In Tuples:		320	300	315.0
+
+Refined Sort Merge Join: IO Theory: 315	Actual IO Cost : 315
+Relation: RelRS	NumBlocks:35	NumTuples:552
+
+
+Relation: RelR	NumBlocks:28	NumTuples:416
+Relation: RelS	NumBlocks:84	NumTuples:1260
+------TestCase 6: Minimum Memory Size
+Memory Size = 20, Block Factor = 15
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	8	14.0
+In Tuples:		300	116	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		20	4	16.8
+In Tuples:		300	60	252.0
+
+Refined Sort Merge Join: IO Theory: 336	Actual IO Cost : 336
+Relation: RelRS	NumBlocks:37	NumTuples:552
+
+
+Relation: RelR	NumBlocks:30	NumTuples:416
+Relation: RelS	NumBlocks:90	NumTuples:1260
+------TestCase 7: Minimum Memory Size
+Memory Size = 20, Block Factor = 14
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	10	15.0
+In Tuples:		280	136	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		20	10	18.0
+In Tuples:		280	140	252.0
+
+Refined Sort Merge Join: IO Theory: 360	Actual IO Cost : 360
+Relation: RelRS	NumBlocks:40	NumTuples:552
+
+
+Relation: RelR	NumBlocks:32	NumTuples:416
+Relation: RelS	NumBlocks:97	NumTuples:1260
+------TestCase 8: Minimum Memory Size
+Memory Size = 20, Block Factor = 13
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	12	16.0
+In Tuples:		260	156	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		20	17	19.4
+In Tuples:		260	220	252.0
+
+Refined Sort Merge Join: IO Theory: 387	Actual IO Cost : 387
+Relation: RelRS	NumBlocks:43	NumTuples:552
+
+
+Relation: RelR	NumBlocks:35	NumTuples:416
+Relation: RelS	NumBlocks:105	NumTuples:1260
+------TestCase 9: Minimum Memory Size
+Memory Size = 20, Block Factor = 12
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	15	17.5
+In Tuples:		240	176	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	6
+		Max length|Min Length|Avg Length
+In blocks:		20	5	17.5
+In Tuples:		240	60	210.0
+
+Refined Sort Merge Join: IO Theory: 420	Actual IO Cost : 420
+Relation: RelRS	NumBlocks:46	NumTuples:552
+
+
+Relation: RelR	NumBlocks:38	NumTuples:416
+Relation: RelS	NumBlocks:115	NumTuples:1260
+------TestCase 10: Minimum Memory Size
+Memory Size = 20, Block Factor = 11
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	2
+		Max length|Min Length|Avg Length
+In blocks:		20	18	19.0
+In Tuples:		220	196	208.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	6
+		Max length|Min Length|Avg Length
+In blocks:		20	15	19.166666
+In Tuples:		220	160	210.0
+
+Refined Sort Merge Join: IO Theory: 459	Actual IO Cost : 459
+Relation: RelRS	NumBlocks:51	NumTuples:552
+
+
+Relation: RelR	NumBlocks:42	NumTuples:416
+Relation: RelS	NumBlocks:126	NumTuples:1260
+------TestCase 11: Minimum Memory Size
+Memory Size = 20, Block Factor = 10
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		20	2	14.0
+In Tuples:		200	16	138.66667
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	7
+		Max length|Min Length|Avg Length
+In blocks:		20	6	18.0
+In Tuples:		200	60	180.0
+
+Refined Sort Merge Join: IO Theory: 504	Actual IO Cost : 504
+Relation: RelRS	NumBlocks:56	NumTuples:552
+
+
+Relation: RelR	NumBlocks:47	NumTuples:416
+Relation: RelS	NumBlocks:140	NumTuples:1260
+------TestCase 12: Minimum Memory Size
+Memory Size = 20, Block Factor = 9
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		20	7	15.666667
+In Tuples:		180	56	138.66667
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	7
+		Max length|Min Length|Avg Length
+In blocks:		20	20	20.0
+In Tuples:		180	180	180.0
+
+Refined Sort Merge Join: IO Theory: 561	Actual IO Cost : 561
+Relation: RelRS	NumBlocks:62	NumTuples:552
+
+
+Relation: RelR	NumBlocks:52	NumTuples:416
+Relation: RelS	NumBlocks:158	NumTuples:1260
+------TestCase 13: Minimum Memory Size
+Memory Size = 20, Block Factor = 8
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		20	12	17.333334
+In Tuples:		160	96	138.66667
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	8
+		Max length|Min Length|Avg Length
+In blocks:		20	18	19.75
+In Tuples:		160	140	157.5
+
+Refined Sort Merge Join: IO Theory: 630	Actual IO Cost : 630
+Relation: RelRS	NumBlocks:69	NumTuples:552
+
+
+Relation: RelR	NumBlocks:60	NumTuples:416
+Relation: RelS	NumBlocks:180	NumTuples:1260
+------TestCase 14: Minimum Memory Size
+Memory Size = 20, Block Factor = 7
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	3
+		Max length|Min Length|Avg Length
+In blocks:		20	20	20.0
+In Tuples:		140	136	138.66667
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	9
+		Max length|Min Length|Avg Length
+In blocks:		20	20	20.0
+In Tuples:		140	140	140.0
+
+Refined Sort Merge Join: IO Theory: 720	Actual IO Cost : 720
+Relation: RelRS	NumBlocks:79	NumTuples:552
+
+
+Relation: RelR	NumBlocks:70	NumTuples:416
+Relation: RelS	NumBlocks:210	NumTuples:1260
+------TestCase 15: Minimum Memory Size
+Memory Size = 20, Block Factor = 6
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	4
+		Max length|Min Length|Avg Length
+In blocks:		20	10	17.5
+In Tuples:		120	56	104.0
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	11
+		Max length|Min Length|Avg Length
+In blocks:		20	10	19.09091
+In Tuples:		120	60	114.545456
+
+Refined Sort Merge Join: IO Theory: 840	Actual IO Cost : 840
+Relation: RelRS	NumBlocks:92	NumTuples:552
+
+
+Relation: RelR	NumBlocks:84	NumTuples:416
+Relation: RelS	NumBlocks:252	NumTuples:1260
+------TestCase 16: Minimum Memory Size
+Memory Size = 20, Block Factor = 5
+Sublists statistics for RelR:
+Sublists statistics: 
+Total Sublists:	5
+		Max length|Min Length|Avg Length
+In blocks:		20	4	16.8
+In Tuples:		100	16	83.2
+Sublists statistics for RelS:
+Sublists statistics: 
+Total Sublists:	13
+		Max length|Min Length|Avg Length
+In blocks:		20	12	19.384615
+In Tuples:		100	60	96.92308
+
+Refined Sort Merge Join: IO Theory: 1008	Actual IO Cost : 1008
+Relation: RelRS	NumBlocks:111	NumTuples:552
+
+
+Relation: RelR	NumBlocks:104	NumTuples:416
+Relation: RelS	NumBlocks:315	NumTuples:1260
+------TestCase 17: Minimum Memory Size
+Memory Size = 20, Block Factor = 4
+Condition for Refined SortMerge Join is not met. Program is exiting..
+
+
+Relation: RelR	NumBlocks:139	NumTuples:416
+Relation: RelS	NumBlocks:420	NumTuples:1260
+------TestCase 18: Minimum Memory Size
+Memory Size = 20, Block Factor = 3
+Condition for Refined SortMerge Join is not met. Program is exiting..
+
+
+Relation: RelR	NumBlocks:208	NumTuples:416
+Relation: RelS	NumBlocks:630	NumTuples:1260
+------TestCase 19: Minimum Memory Size
+Memory Size = 20, Block Factor = 2
+Condition for Refined SortMerge Join is not met. Program is exiting..
+
+
+Relation: RelR	NumBlocks:416	NumTuples:416
+Relation: RelS	NumBlocks:1260	NumTuples:1260
+------TestCase 20: Minimum Memory Size
+Memory Size = 20, Block Factor = 1
+Condition for Refined SortMerge Join is not met. Program is exiting..
+
+
+Relation: RelR	NumBlocks:417	NumTuples:0
+Relation: RelS	NumBlocks:1261	NumTuples:0
+------TestCase 21: Minimum Memory Size
+Memory Size = 20, Block Factor = 0
+Condition for Refined SortMerge Join is not met. Program is exiting..
+
+
