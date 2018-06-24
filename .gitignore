@@ -2,4 +2,9 @@
 .DS_Store
 # project description file
 *.pdf
+=======
+.classpath
+.project
+.settings/
+bin/
 
