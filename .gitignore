@@ -9,3 +9,14 @@ Data/
 
 .DS_Store
 .idea
+=======
+*/.DS_Store
+.DS_Store
+# project description file
+*.pdf
+=======
+.classpath
+.project
+.settings/
+bin/
+
